@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Career Assessment Key</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --secondary: #4f46e5;
+      --accent: #eab308;
+      --text-dark: #1e293b;
+      --text-light: #64748b;
+      --white: #ffffff;
+      --light-bg: #f8fafc;
+      --border: #e2e8f0;
+      --success: #10b981;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f1f5f9;
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+    
+    .header {
+      text-align: center;
+      padding: 20px 0 30px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #cbd5e1;
+    }
+    
+    .header h1 {
+      color: var(--primary);
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    
+    .header h3 {
+      color: var(--primary-dark);
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 15px;
+    }
+    
+    .header h4 {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      font-weight: 400;
+    }
+    
+    .assessment-container {
+      background-color: var(--white);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      margin-bottom: 30px;
+    }
+    
+    .assessment-container h2 {
+      color: #b91c1c;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+    
+    .page { 
+      display: none; 
+      animation: fadeIn 0.5s;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .page.active { 
+      display: block; 
+    }
+    
+    .instructions {
+      background-color: #f0f9ff;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      border-left: 4px solid var(--primary);
+    }
+    
+    .category-title {
+      font-weight: bold;
+      color: var(--secondary);
+      margin-top: 30px;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .category-title:before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 20px;
+      background-color: var(--secondary);
+      margin-right: 10px;
+      border-radius: 4px;
+    }
+    
+    .question-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .question-item {
+      background-color: var(--light-bg);
+      padding: 16px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .question-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .question-item label {
+      display: block;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+    
+    .radio-group {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+    }
+    
+    .radio-group label {
+      background-color: var(--white);
+      padding: 8px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: all 0.2s;
+      text-align: center;
+      margin: 0;
+      flex: 1;
+      border: 1px solid var(--border);
+    }
+    
+    .radio-group label:hover {
+      background-color: #f1f5f9;
+    }
+    
+    .radio-group input[type="radio"] {
+      margin-right: 6px;
+    }
+    
+    .radio-group input[type="radio"]:checked + span {
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .results {
+      display: none;
+      margin-top: 30px;
+      background: #eff6ff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      animation: fadeIn 0.8s;
+    }
+    
+    .results h3 {
+      color: var(--primary-dark);
+      margin-bottom: 15px;
+      text-align: center;
+      font-size: 1.4rem;
+    }
+    
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-top: 30px;
+    }
+    
+    button {
+      padding: 12px;
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.2s;
+      box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+    }
+    
+    button:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(37, 99, 235, 0.3);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    button#prevPageBtn {
+      background-color: #64748b;
+      box-shadow: 0 4px 6px rgba(100, 116, 139, 0.2);
+    }
+    
+    button#prevPageBtn:hover {
+      background-color: #475569;
+      box-shadow: 0 6px 8px rgba(100, 116, 139, 0.3);
+    }
+    
+    button#submitBtn {
+      background-color: var(--success);
+      box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+    }
+    
+    button#submitBtn:hover {
+      background-color: #059669;
+      box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3);
+    }
+    
+    button#copyBtn {
+      background-color: var(--accent);
+      box-shadow: 0 4px 6px rgba(234, 179, 8, 0.2);
+    }
+    
+    button#copyBtn:hover {
+      background-color: #ca8a04;
+      box-shadow: 0 6px 8px rgba(234, 179, 8, 0.3);
+    }
+    
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 15px;
+      background: white;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    .result-item span:first-child {
+      font-weight: 500;
+    }
+    
+    .result-item span:last-child {
+      font-weight: 600;
+      color: var(--primary);
+      background: #e0e7ff;
+      padding: 2px 15px;
+      border-radius: 12px;
+    }
+    
+    #interpretation {
+      margin-top: 20px;
+      padding: 15px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    #interpretation h4 {
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    
+    .chart-container {
+      width: 100%;
+      height: 500px; /* Increased height for the chart */
+      margin: 30px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    
+    canvas#scoreChart {
+      width: 100%;
+      max-height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>වෘත්තීය යතුර<br>CAREER KEY</h1>
+    <h3>ඔබේ කැමැත්ත මැන ගනිමින් ඔබට ගැළපෙන වෘත්තිය තෝරාගන්න. ඔබේ වෘත්තිය හෝ අධ්‍යාපන ක්ෂේත්‍රය තෝරාගැනීම ගැළපීමේ ක්‍රියාවලියකි.</h3>
+    <h4>Source by the Career Key by Lawrence K'Jones,Ph.D,NCC.<br>කොළඹ විශ්වවිද්‍යාලයීය වෘත්තීය මාර්ගෝපදේශන ඒකකයේ ආචාර්ය කීර්ති ප්‍රේමදාස හා අජිත් ජයවර්ධනගේ සැකසුමකි.<br>
+	ඩිජිටල් ප්‍රතිනිමැවුම-@ අමිල උඩවත්ත-www.eduhelp.lk-2025</h4>
+  </div>
+  
+  <div class="assessment-container">
+    <h2>ඔබේ හැකියාවන් හා ළැදියාවන් හඳුනාගන්න</h2>
+    
+    <div class="instructions">
+    <ul>
+    <li>ඔබ දෙස ඔබ ම බලන්නේ කෙසේ ද?... එය තීරණය කිරීමට පහසු වන අයුරින් පළමු පිටුවේ වර්ග 6කට වෙන් කළ වගන්ති 30ක් දී තිබේ. එම සෑම වගන්තියක් ම කියවා එය ඔබව කොපමණ විස්තර කරන්නේදැ'යි තීරණය කරන්න. ඔබ සම්බන්ධයේ එම වගන්තිය වඩාත්ම නිවැරදි නම් ඒ සමග ඇති අංක අතරින් 2 සලකුණු කරන්න. ඔබ සම්බන්ධයෙන් එම වගන්තිය යම්තාක් දුරකට නිවැරදි නම් අංක 1 සලකුණු කරන්න. එය කිසිසේත් ම ඔබට අදාළ නොවේ නම් 0 සලකුණු කරන්න.</li>
+    <li>දෙවැනි පිටුවේ රැකියා වර්ග 48ක් දක්වා තිබේ. ඒවා අතරින් කුමන ආකාරයෙන් හෝ පැහැදිලිව ම ප්‍රයෝජනවත් වන හෝ ඔබගේ සිත් බැඳගන්නා රැකියාවන් තෝරා, අංක 2 මගින් සලකුණු කර දක්වන්න. එලෙසින් ම ඔබට යම්තාක්දුරට ප්‍රයෝජනවත් වන රැකියා අංක 1 මගින් ද, ප්‍රයෝජනවත් නොවන රැකියා 0 මගින් ද සලකුණු කරන්න.</li>
+    </ul>
+	</div>
+    
+    <form id="careerAssessment">
+      <div id="page1" class="page active"></div>
+      <div id="page2" class="page"></div>
+      
+      <!-- Chart Canvas (After Page 2) - Changed to be wrapped in a container -->
+      <div class="chart-container" style="display: none;">
+        <canvas id="scoreChart"></canvas>
+      </div>
+
+      <div class="button-container">
+        <button type="button" id="prevPageBtn" style="display:none;">Previous</button>
+        <button type="button" id="nextPageBtn">Next</button>
+        <button type="button" id="submitBtn" style="display:none;">Show Results</button>
+        <button type="button" id="copyBtn" style="display:none;">Copy Results</button>
+      </div>
+    </form>
+
+    <div id="results" class="results">
+      <h3>Results</h3>
+      <div class="result-item"><span>Realistic (R)</span><span id="r-score">0</span></div>
+      <div class="result-item"><span>Investigative (I)</span><span id="i-score">0</span></div>
+      <div class="result-item"><span>Artistic (A)</span><span id="a-score">0</span></div>
+      <div class="result-item"><span>Social (S)</span><span id="s-score">0</span></div>
+      <div class="result-item"><span>Enterprising (E)</span><span id="e-score">0</span></div>
+      <div class="result-item"><span>Conventional (C)</span><span id="c-score">0</span></div>
+      <div id="interpretation" style="margin-top:15px;"></div>
+    </div>
+  </div>
+  
+<script>
+  const page1Categories = {
+	r: ["මා සතුන් උපකරණ හෝ යන්ත්‍ර සූත්‍ර සමග වැඩ කිරීමට කැමතිය.", "මාගේ වයසේ අනෙක් අය සමග සසඳන විට මට උපකරණ,යන්ත්‍ර සූත්‍ර හෝ සතුන් සමග වැඩ කිරීමේ හා යාන්ත්‍රික ඇඳීම් ආදියේ ඉහළ හැකියාවක් ඇත.",	"මම ප්‍රායෝගික දේ අගය කරමි. දැකිය හැකි ස්පර්ශ කළ හැකි ගස්වැල් හා සතුන් හදාවඩා ගන්නටත් වඩා හොඳින්‌ සාදන්නටත්‌ කැමැත්තෙමි.", "මා ප්‍රායෝගික, යාන්ත්‍රික දේට කැමති අතර යථාර්ථවාදී අයෙකි.", "එළිමහනේ කරන ක්‍රීඩාවලට ඉහළ හැකියාවක්‌ මට ඇත."],
+    i: ["මා ගණිත හෝ විද්‍යා ගැටලු ඉගෙන ගැනීමට හා විසඳීමට කැමතියි.", "මාගේ වයසේ අනෙක්‌ අයට සාපේක්‍ෂව මට ගණිත ගැටලු අවබෝධ කරගැනීමේ හා ඒවා විසඳීමේ ඉහළ හැකියාවක්‌ ඇත.", "මා විද්‍යාව අගය කරනවා.", "මා සූක්‍ෂම,විද්‍යාත්මක හා බුද්ධිමත්‌ අයෙකි.", "අධිකරණ වෛද්‍ය විද්‍යාව හා බැඳුනු රහස්‌ පරීක්‍ෂක කතා කියවීමට හෝ එවැනි චිත්‍රපට නැරඹීමට දැඩි කැමැත්තක්‌ මට ඇත."],
+    a: ["මා විත්‍ර, නාට්‍ය, කලා ශිල්ප, නැටුම්‌, සංගීතය හෝ නිරීමාණාත්මක ලේඛනය වැනි නිර්මාණශීලී දේ කිරීමට කැමතියි.", "මාගේ වයසේ අනෙක්‌ අයට සාපේක්ෂව නිරිීමාණාත්මක ලේඛනය, නාට්‍ය, කලා ශිල්ප, සංගීතය, චිත්‍ර වැනි ක්ෂේත්‍රයන්හි ඉහළ කුසලතාවක්‌ මට ඇත.", "නිර්මාණශීලී ලේඛකයන්‌ අතරින්‌ බිහි වූ නාට්‍ය සංගීත, චිත්‍ර වැනි නිර්මාණාත්මක කලා කටයුතු මම අගය කරමි.", "මා ප්‍රතිභා සමපන්න, කලාත්මක, පරිකල්පනාත්මක හැකියාවක්‌ ඇති අයෙකි.", "පරිගණක ආශ්‍රිතව කරන ඇඳිමි හා ශ්‍රව්‍ය දෘශ්‍ය නිරීමාණ කිරීමට මා තුළ ඉහළ කැමැත්තක්‌ ඇත."],
+    s: ["ඉගැන්වීම, ප්‍රථමාධාර දීම, තොරතුරු සපයා දීම වැනි මිනිසුන්ට උදවි කළ හැකි දේ කිරීමට මා කැමතියි.", "මාගේ වයසේ අනෙක්‌ අයට සාපේක්ෂව මා ඉගැන්වීම, උපදේශනය, උපස්ථානය හෝ තොරතුරු සැපයීම වැනි ක්ෂේත්‍රයන්හි විශේෂ දක්ෂතාවයක්‌ දක්වයි.", "මම මිනිසුන්ට උදවි කිරීම හා සමාජ ප්‍රශ්න විසඳීම අගයකොට සලකමි.", "මා අන්‍යන්ට උපකාර වන මිත්‍රශීලී හා විශ්වාසවන්ත අයෙකි.", "සමිති සමාගම්‌ ආදියෙහි ක්‍රියාකාරී සාමාජිකත්වය ලබාගෙන කණ්ඩායම්‌ සමඟ කටයුතු කිරීමේ කැමැත්තක්‌මට ඇත."],
+    e: ["මා මිනිසුන්ට නායකත්වය දීමටත්‌ ඔවුන්ව මෙහෙයවීමටත්‌ අදහස්‌ හා දේවල්‌ විකිණීමටත්‌ ඉහළ හැකියාවෙන්‌ යුතු අයෙකි.", "මගේ වයසේ අනිත්‌ අය සමඟ සසඳන විට මම මිනිසුන්‌ පාලනය කිරීමේ සහ අදහස්‌ සහ දේවල්‌ ඒත්තු ගැන්වීමටත්‌ ඉහළ හැකියාවක්‌ ඇති අයෙකි.", "දේශපාලනය, නායකත්වය හා ව්‍යාපාර මම අගයමි. .", "මා උද්යෝගිමත්‌, අධිෂ්ඨානශීලී හා සමාජශීලී අයෙකි.", "මගේම ව්‍යාපාරයක්‌ ආරමිභ කිරීමේ දැඩි කැමැත්තක්‌ මට ඇත."],
+    c: ["මම ක්‍රමානුකූල සංඛ්‍යා, වාර්තා හෝ යන්ත්‍ර සූත්‍ර සමඟ වැඩකිරීමට කැමැත්තෙමි.", "මගේ වයසේ අනික්‌ අය සමඟ සසඳන විට මම පිළිවෙළට හා ක්‍රමානුකූලව, සංඛ්‍යා, ලිඛිත වාර්තා සමඟ වැඩ කිරීමේ ඉහළ මට්ටමක සිටිමි.", "ව්‍යාපාර මගින්‌ සාර්ථක වීම මම අගය කරමි.", "මා ක්‍රමානුකූල මෙන්ම සැලසුම්‌ කළ දෙය හොඳින්‌ කිරීමේ හැකියාවෙන්‌ යුක්ත අයෙකි.", "දිගු වේලාවක්‌ එක්‌ ස්ථානයක රැදී සිටිමින්‌ හුදෙකලාව ලියකියවිලි පරීක්ෂා කිරීමේ හා සටහන්‌ තැබීමේ ඉහළ හැකියාවක්‌ මට ඇත."]
+  };
+
+  const page2Order = "RAECISERIACSAEISRAECISERIACSICRSRAECISERIACSAERC".toLowerCase().split("");
+  const page2Questions = [
+    "R 1 වායුසමන යන්ත්‍ර කාර්මික ශිල්පී ", "A 1 පුවත්පත් ලේඛක ", "E 1 වෙළඳ කළමනාකරු ", "C 1 පරිගණක දත්ත ක්‍රියාකරු ", "I 1 ජීව විද්‍යාඥ", "S 1 කථන චිකිත්සක ", "E 2 අවන්හල් කළමනාකරු", "R 2 එස්කැවේටර් ක්‍රියාකරු ",
+    "I 2 විදුලි ඉංජිනේරු ", "A 2 නළු/නිළි ", "C 2 මූල්‍ය විශ්ලේෂක ", "S 2 පුස්තකාලයාධිපති ", "A 2 ගායක ", "E 3 රක්ෂණ වෙළඳ නියෝජිත ", "I 3 පර්යේෂණාත්මක විද්‍යාඥ ", "S 3 කථිකාචාර්ය ",
+    "R 3 මෝටර් රථ කාර්මික ශිල්පී ", "A 3 සංගීතඥ", "E 4 රූපවාහිනි/ගුවන්විදුලි නිවේදක ", "C 3 පරිපාලන නිලධාරී ", "I 4 විද්‍යාගාර තාක්ෂණ ශිල්පී ", "S 4 ආපදා කළමනිකරණ නිලධාරී ", "E 5 මංගල උත්සව සැලසුම්කරු ", "R 4 කූරියර්/බෙදාහැරීමේ රියදුරු ",
+    "I 5 පරිසර විද්‍යාඥ ", "A 4 මෝස්තර නිර්මාණකරු ", "C 4 ගබඩා පාලක ", "S 5 මානව සම්පත් කළමනාකරු ", "I 6 රසායන තාක්ෂණ ශිල්පී ", "C 5 බදු නිලධාරී ", "R 5 පෑස්සුම් ශිල්පී ", "S 6 සාත්තු සේවිකා ",
+    "R 6 හරිතාගාර ගොවියා ", "A 5 චිත්‍ර ශිල්පී ", "E 6 ව්‍යපෘති කළමනාකරු ", "C 6 වාණිජ ගුරුවරයා ", "I 7 ඖෂධවේදී ", "S 7 ළමා ආරක්ෂක නිලධාරී ", "E 7 නීතිඥයා ", "R 7 ඩ්‍රෝන ක්‍රියාකරු ",
+    "I 8 සංඛ්‍යාලේඛනඥ ", "A 6 නැටුම් ශිල්පී ", "C 7 ගිණුම් ලිපිකරු ", "S 8 මනෝ උපදේශක ", "A 7 ත්‍රිමාණ නිර්මාණකරු ", "E 8 මහජන සම්බන්ධතා නිලධාරී ", "R 8 යාන්ත්‍රික ඉංජිනේරු ", "C 8 නීති ලේකම් "
+  ];
+
+  function createQuestionItem(name, labelText) {
+    const item = document.createElement("div");
+    item.className = "question-item";
+    
+    const label = document.createElement("label");
+    label.innerText = labelText;
+    
+    const group = document.createElement("div");
+    group.className = "radio-group";
+    
+    for (let i = 0; i <= 2; i++) {
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = name;
+      input.value = i;
+      input.id = `${name}-${i}`;
+      
+      const wrapper = document.createElement("label");
+      wrapper.htmlFor = `${name}-${i}`;
+      wrapper.appendChild(input);
+      
+      const span = document.createElement("span");
+      span.textContent = ` ${i}`;
+      wrapper.appendChild(span);
+      
+      group.appendChild(wrapper);
+    }
+    
+    item.appendChild(label);
+    item.appendChild(group);
+    return item;
+  }
+
+  function renderPage1() {
+    const container = document.getElementById("page1");
+    Object.entries(page1Categories).forEach(([cat, questions]) => {
+      const title = document.createElement("div");
+      title.className = "category-title";
+      
+      // Set category labels
+      const categoryLabels = {
+        r: "Realistic (R)",
+        i: "Investigative (I)",
+        a: "Artistic (A)",
+        s: "Social (S)",
+        e: "Enterprising (E)",
+        c: "Conventional (C)"
+      };
+      
+      title.innerText = categoryLabels[cat];
+      container.appendChild(title);
+      
+      const grid = document.createElement("div");
+      grid.className = "question-grid";
+      
+      questions.forEach((q, i) => {
+        const item = createQuestionItem(`${cat}${i + 1}`, q);
+        grid.appendChild(item);
+      });
+      
+      container.appendChild(grid);
+    });
+  }
+
+  function renderPage2() {
+    const container = document.getElementById("page2");
+    const title = document.createElement("div");
+    title.className = "category-title";
+    title.innerText = "Career Interest Questions";
+    container.appendChild(title);
+    
+    const grid = document.createElement("div");
+    grid.className = "question-grid";
+    
+    page2Order.forEach((cat, i) => {
+      const item = createQuestionItem(`${cat}${i + 6}`, page2Questions[i]);
+      grid.appendChild(item);
+    });
+    
+    container.appendChild(grid);
+  }
+
+  let chartInstance;
+
+  function renderChart(scores) {
+    const ctx = document.getElementById("scoreChart").getContext("2d");
+    
+    // Show the canvas container
+    document.querySelector(".chart-container").style.display = "block";
+    
+    // Define chart colors
+    const chartColors = {
+      r: "#34d399", // Realistic - Green
+      i: "#60a5fa", // Investigative - Blue
+      a: "#a78bfa", // Artistic - Purple
+      s: "#fbbf24", // Social - Yellow
+      e: "#f97316", // Enterprising - Orange
+      c: "#f43f5e"  // Conventional - Red
+    };
+    
+    const data = {
+      labels: ["Realistic (R)", "Investigative (I)", "Artistic (A)", "Social (S)", "Enterprising (E)", "Conventional (C)"],
+      datasets: [{
+        label: "Career Assessment Scores",
+        data: [scores.r, scores.i, scores.a, scores.s, scores.e, scores.c],
+        backgroundColor: [
+          chartColors.r,
+          chartColors.i,
+          chartColors.a,
+          chartColors.s,
+          chartColors.e,
+          chartColors.c
+        ],
+        borderColor: [
+          chartColors.r,
+          chartColors.i,
+          chartColors.a,
+          chartColors.s,
+          chartColors.e,
+          chartColors.c
+        ],
+        borderWidth: 1
+      }]
+    };
+    
+    const options = {
+      responsive: true,
+      maintainAspectRatio: false, // Allow chart to fill container
+      plugins: {
+        legend: { 
+          display: true,
+          position: 'top',
+          labels: {
+            font: {
+              size: 14
+            },
+            padding: 20
+          }
+        },
+        title: { 
+          display: true, 
+          text: "Your Career Category Scores",
+          font: {
+            size: 22,
+            weight: 'bold'
+          },
+          color: '#1e40af',
+          padding: {
+            top: 10,
+            bottom: 20
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          precision: 0,
+          ticks: {
+            stepSize: 1,
+            font: {
+              size: 14
+            }
+          },
+          grid: {
+            color: 'rgba(0, 0, 0, 0.05)'
+          }
+        },
+        x: {
+          ticks: {
+            font: {
+              size: 14
+            }
+          },
+          grid: {
+            color: 'rgba(0, 0, 0, 0.05)'
+          }
+        }
+      }
+    };
+    
+    if (chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(ctx, { 
+      type: "bar", 
+      data, 
+      options 
+    });
+  }
+
+  function calculateScores() {
+    const scores = { r: 0, i: 0, a: 0, s: 0, e: 0, c: 0 };
+    let unanswered = false;
+    
+    Object.keys(scores).forEach(cat => {
+      const inputs = document.querySelectorAll(`input[name^='${cat}']`);
+      const names = new Set(Array.from(inputs).map(i => i.name));
+      
+      names.forEach(name => {
+        const group = document.getElementsByName(name);
+        const selected = Array.from(group).find(r => r.checked);
+        
+        if (selected) {
+          scores[cat] += parseInt(selected.value);
+        } else {
+          unanswered = true;
+        }
+      });
+    });
+    
+    if (unanswered) {
+      alert("Please answer all questions before submitting.");
+      return;
+    }
+    
+    Object.entries(scores).forEach(([cat, val]) => {
+      document.getElementById(`${cat}-score`).textContent = val;
+    });
+    
+    showInterpretation(scores);
+    renderChart(scores);
+  }
+
+  function showInterpretation(scores) {
+    const descriptions = {
+      r: "Realistic people are practical, hands-on, and enjoy working with tools, machines, or nature. They prefer concrete problems over abstract ones and value tangible results.",
+      i: "Investigative people are analytical, curious, and enjoy exploring ideas and solving complex problems. They value knowledge and understanding through research and analysis.",
+      a: "Artistic people are creative, expressive, and enjoy unstructured activities that allow for self-expression and original thinking. They value aesthetics and innovation.",
+      s: "Social people are helpful, empathetic, and enjoy working with others. They value relationships and making a positive impact on people's lives through teaching, counseling, or service.",
+      e: "Enterprising people are energetic, ambitious, and enjoy leading, persuading, and influencing others. They value status, power, and achievement in business or politics.",
+      c: "Conventional people are organized, detail-oriented, and enjoy working with data, numbers, and systems. They value accuracy, stability, and clearly defined procedures."
+    };
+    
+    const max = Math.max(...Object.values(scores));
+    const top = Object.entries(scores).filter(([_, v]) => v === max);
+    
+    let html = "<h4>Your Career Type Interpretation</h4>";
+    
+    if (top.length === 1) {
+      const [key] = top[0];
+      html += `<p><strong>${key.toUpperCase()}</strong>: ${descriptions[key]}</p>`;
+    } else {
+      html += "<p>You have multiple dominant types:</p><ul>";
+      top.forEach(([key]) => {
+        html += `<li><strong>${key.toUpperCase()}</strong>: ${descriptions[key]}</li>`;
+      });
+      html += "</ul>";
+    }
+    
+    document.getElementById("interpretation").innerHTML = html;
+    document.getElementById("results").style.display = "block";
+    document.getElementById("copyBtn").style.display = "block";
+  }
+
+  // Navigation with scroll-to-top functionality
+  document.getElementById("nextPageBtn").onclick = () => {
+    if (document.getElementById("page1").classList.contains("active")) {
+      document.getElementById("page1").classList.remove("active");
+      document.getElementById("page2").classList.add("active");
+      document.getElementById("submitBtn").style.display = "block";
+      document.getElementById("prevPageBtn").style.display = "block";
+      document.getElementById("nextPageBtn").style.display = "none";
+      
+      // Scroll to the top of the assessment container
+      document.querySelector(".assessment-container").scrollIntoView({ behavior: "smooth" });
+    }
+  };
+  
+  document.getElementById("prevPageBtn").onclick = () => {
+    document.getElementById("page2").classList.remove("active");
+    document.getElementById("page1").classList.add("active");
+    document.getElementById("submitBtn").style.display = "none";
+    document.getElementById("results").style.display = "none";
+    document.querySelector(".chart-container").style.display = "none";
+    document.getElementById("copyBtn").style.display = "none";
+    document.getElementById("prevPageBtn").style.display = "none";
+    document.getElementById("nextPageBtn").style.display = "block";
+    
+    // Scroll to the top of the assessment container
+    document.querySelector(".assessment-container").scrollIntoView({ behavior: "smooth" });
+  };
+
+  document.getElementById("submitBtn").onclick = () => {
+    calculateScores();
+    
+    // Scroll to see results
+    document.getElementById("results").scrollIntoView({ behavior: "smooth" });
+  };
+  
+  document.getElementById("copyBtn").onclick = () => {
+    const text = Array.from(document.querySelectorAll(".result-item"))
+      .map(item => item.innerText).join("\n");
+    navigator.clipboard.writeText(text);
+    alert("Results copied to clipboard!");
+  };
+
+  renderPage1();
+  renderPage2();
+</script>
+</body>
+</html>
