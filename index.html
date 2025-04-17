@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Career Assessment Key</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <style>
     :root {
       --primary: #2563eb;
@@ -322,6 +323,103 @@
       width: 100%;
       max-height: 100%;
     }
+	/* Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  animation: fadeIn 0.3s;
+}
+
+.modal-content {
+  background-color: var(--white);
+  margin: 15% auto;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  width: 80%;
+  max-width: 400px;
+  animation: slideDown 0.4s;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-header h4 {
+  color: var(--primary-dark);
+  margin: 0;
+}
+
+.close-btn {
+  color: var(--text-light);
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.close-btn:hover {
+  color: var(--primary);
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-form input {
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.modal-form button {
+  padding: 10px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+
+.modal-form button:hover {
+  background-color: var(--primary-dark);
+}
+<style>
+  .interpretation-note {
+    color: #dc2626; /* deep red */
+    font-weight: bold;
+    background-color: #fff1f2; /* light red background */
+    border-left: 4px solid #dc2626;
+    padding: 15px;
+    margin-top: 30px;
+    border-radius: 8px;
+    line-height: 1.8;
+    font-size: 15px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+</style>
+</style>
 	  </style>
 </head>
 <body>
@@ -331,17 +429,40 @@
       <img src="https://www.eduhelp.lk/wp-content/uploads/2025/04/career-key-ad-04.jpg" alt="EduHelp Banner">
     </a>
   </div>
+  <!-- Modal for saving chart -->
+<div id="saveModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4>Save Chart</h4>
+      <span class="close-btn">&times;</span>
+    </div>
+    <div class="modal-form">
+      <input type="text" id="saveNameInput" placeholder="Enter your name">
+      <button id="confirmSaveBtn">OK</button>
+    </div>
+  </div>
+</div>
 <body>
   <div class="header">
     <h1>වෘත්තීය යතුර<br>CAREER KEY</h1>
     <h3>ඔබේ කැමැත්ත මැන ගනිමින් ඔබට ගැළපෙන වෘත්තිය තෝරාගන්න. ඔබේ වෘත්තිය හෝ අධ්‍යාපන ක්ෂේත්‍රය තෝරාගැනීම ගැළපීමේ ක්‍රියාවලියකි.</h3>
     <h4>Source by the Career Key by Lawrence K'Jones,Ph.D,NCC.<br>කොළඹ විශ්වවිද්‍යාලයීය වෘත්තීය මාර්ගෝපදේශන ඒකකයේ ආචාර්ය කීර්ති ප්‍රේමදාස හා අජිත් ජයවර්ධනගේ සැකසුමකි.<br>
 	ඩිජිටල් ප්‍රතිනිමැවුම-@ අමිල උඩවත්ත-www.eduhelp.lk-2025</h4>
-	<h4>මෙහි අවසයේ දැවෙන දැවෙන Interpretation හි ඇතේ දළ විශ්ලේෂණයක් පමණි. වැඩි විස්තර සඳහා ඔබට වෘත්තීය යතුර පිළිබඳ විශ්ලේෂණ නිපුණතාව ඇති වෘත්තීය මාගදේශකවරයෙකුගේ සහයක් ලබා ගැනීමට අවශ්‍ය වේ. 
-	ඒ යටතේ ඔබගේ ඉදිරි ජීවිතය තීරණය කරන බොහෝ කරුණු පිළිබඳ පුළුල් විග්‍රහයක් ලබාගත හැක. ඔබ කළයුතු වන්නේ මේ ප්‍රස්තාරයේ Screen shot එකක් ලබාගෙන මේ සමග ඇති ප්‍රථිඵල ද පිටපත් 
-	කරගෙන(copy result)එය අදාළ මාර්ගෝපදේශකතුමා හෝ තුමිය වෙත යොමු කිරීමයි.මේ සඳහා යම් අයකිරීමක් සිදු කරනු ලබයි. නිවැරදි මගපෙන්වීමක් මත නිවැරදි මාවතක ගමන්කිරීමෙන් කාලය හා මුදල් 
-	ඉතිරිකරගැනීමට ඔබට හැකිවනු ඇත. eduhelp career guidance සේවාව තුළින් ඔබට එම සේවාව ලබාගැනීමට අවශ්‍ය නම් අමතන්න.  0701768844 </h4>
-	    </div>
+	  </div>
+	  <h4 class="interpretation-note">
+මෙහි අවසියේ දැවෙන Interpretation හි ඇතේ දළ විශ්ලේෂණයක් පමණි. වැඩි විස්තර සඳහා ඔබට වෘත්තීය යතුර පිළිබඳ විශ්ලේෂණ 
+නිපුණතාව ඇති වෘත්තීය මාර්ගෝපදේශකවරයෙකුගේ සහයක් ලබා ගැනීමට අවශ්‍ය වේ.<br><br>
+
+ඒ යටතේ ඔබගේ ඉදිරි ජීවිතය තීරණය කරන බොහෝ කරුණු පිළිබඳ පුළුල් විග්‍රහයක් ලබාගත හැක. ඔබ කළයුතු වන්නේ 
+මේ ප්‍රස්ථාරයේ පින්තූරයක් save කරගෙන(save chart) මේ සමග ඇති ප්‍රථිඵල ද පිටපත් කරගෙන (Copy Result) එය 
+අදාළ මාර්ගෝපදේශකතුමා හෝ තුමිය වෙත යොමු කිරීමයි.<br><br>
+
+මේ සඳහා යම් අයකිරීමක් සිදු කරනු ලබයි. නිවැරදි මගපෙන්වීමක් මත නිවැරදි මාවතක ගමන් කිරීමෙන් කාලය හා මුදල් 
+ඉතිරිකරගැනීමට ඔබට හැකිවනු ඇත.<br><br>
+
+<strong>EduHelp Career Guidance සේවාව</strong> තුළින් ඔබට එම සේවාව ලබාගැනීමට අවශ්‍ය නම් අමතන්න: 
+📞 <strong>0701768844</strong>
+</h4>
   
   <div class="assessment-container">
     <h2>ඔබේ හැකියාවන් හා ළැදියාවන් හඳුනාගන්න</h2>
@@ -361,14 +482,16 @@
       <div class="chart-container" style="display: none;">
         <canvas id="scoreChart"></canvas>
       </div>
-
+	  
       <div class="button-container">
-        <button type="button" id="prevPageBtn" style="display:none;">Previous</button>
-        <button type="button" id="nextPageBtn">Next</button>
-        <button type="button" id="submitBtn" style="display:none;">Show Results</button>
-        <button type="button" id="copyBtn" style="display:none;">Copy Results</button>
-      </div>
+  <button type="button" id="prevPageBtn" style="display:none;">Previous</button>
+  <button type="button" id="nextPageBtn">Next</button>
+  <button type="button" id="submitBtn" style="display:none;">Show Results</button>
+  <button type="button" id="saveChartBtn" style="display:none;">Save Chart</button>
+  <button type="button" id="copyBtn" style="display:none;">Copy Results</button>
+</div>
     </form>
+	
 
     <div id="results" class="results">
       <h3>Results</h3>
@@ -380,14 +503,15 @@
       <div class="result-item"><span>Conventional (C)</span><span id="c-score">0</span></div>
       <div id="interpretation" style="margin-top:15px;"></div>
     </div>
-  </div>	
-	<div class="banner">
+  </div>
+  <div class="banner">
     <a href="https://www.eduhelp.lk" target="_blank">
       <img src="https://www.eduhelp.lk/wp-content/uploads/2025/04/career-key-ad-04.jpg" alt="EduHelp Banner">
     </a>
   </div>
   
 <script>
+
   const page1Categories = {
 	r: ["මා සතුන් උපකරණ හෝ යන්ත්‍ර සූත්‍ර සමග වැඩ කිරීමට කැමතිය.", "මාගේ වයසේ අනෙක් අය සමග සසඳන විට මට උපකරණ,යන්ත්‍ර සූත්‍ර හෝ සතුන් සමග වැඩ කිරීමේ හා යාන්ත්‍රික ඇඳීම් ආදියේ ඉහළ හැකියාවක් ඇත.",	"මම ප්‍රායෝගික දේ අගය කරමි. දැකිය හැකි ස්පර්ශ කළ හැකි ගස්වැල් හා සතුන් හදාවඩා ගන්නටත් වඩා හොඳින්‌ සාදන්නටත්‌ කැමැත්තෙමි.", "මා ප්‍රායෝගික, යාන්ත්‍රික දේට කැමති අතර යථාර්ථවාදී අයෙකි.", "එළිමහනේ කරන ක්‍රීඩාවලට ඉහළ හැකියාවක්‌ මට ඇත."],
     i: ["මා ගණිත හෝ විද්‍යා ගැටලු ඉගෙන ගැනීමට හා විසඳීමට කැමතියි.", "මාගේ වයසේ අනෙක්‌ අයට සාපේක්‍ෂව මට ගණිත ගැටලු අවබෝධ කරගැනීමේ හා ඒවා විසඳීමේ ඉහළ හැකියාවක්‌ ඇත.", "මා විද්‍යාව අගය කරනවා.", "මා සූක්‍ෂම,විද්‍යාත්මක හා බුද්ධිමත්‌ අයෙකි.", "අධිකරණ වෛද්‍ය විද්‍යාව හා බැඳුනු රහස්‌ පරීක්‍ෂක කතා කියවීමට හෝ එවැනි චිත්‍රපට නැරඹීමට දැඩි කැමැත්තක්‌ මට ඇත."],
@@ -492,141 +616,175 @@
   let chartInstance;
 
   function renderChart(scores) {
-    const ctx = document.getElementById("scoreChart").getContext("2d");
-    
-    // Show the canvas container
-    document.querySelector(".chart-container").style.display = "block";
-    
-    // Define chart colors
-    const chartColors = {
-      r: "#34d399", // Realistic - Green
-      i: "#60a5fa", // Investigative - Blue
-      a: "#a78bfa", // Artistic - Purple
-      s: "#fbbf24", // Social - Yellow
-      e: "#f97316", // Enterprising - Orange
-      c: "#f43f5e"  // Conventional - Red
-    };
-    
-    const data = {
-      labels: ["Realistic (R)", "Investigative (I)", "Artistic (A)", "Social (S)", "Enterprising (E)", "Conventional (C)"],
-      datasets: [{
-        label: "Career Assessment Scores",
-        data: [scores.r, scores.i, scores.a, scores.s, scores.e, scores.c],
-        backgroundColor: [
-          chartColors.r,
-          chartColors.i,
-          chartColors.a,
-          chartColors.s,
-          chartColors.e,
-          chartColors.c
-        ],
-        borderColor: [
-          chartColors.r,
-          chartColors.i,
-          chartColors.a,
-          chartColors.s,
-          chartColors.e,
-          chartColors.c
-        ],
-        borderWidth: 1
-      }]
-    };
-    
-    const options = {
-      responsive: true,
-      maintainAspectRatio: false, // Allow chart to fill container
-      plugins: {
-        legend: { 
-          display: true,
-          position: 'top',
-          labels: {
-            font: {
-              size: 14
-            },
-            padding: 20
-          }
-        },
-        title: { 
-          display: true, 
-          text: "Your Career Category Scores",
+  const ctx = document.getElementById("scoreChart").getContext("2d");
+  
+  // Show the canvas container
+  document.querySelector(".chart-container").style.display = "block";
+  
+  // Define chart colors
+  const chartColors = {
+    r: "#34d399", // Realistic - Green
+    i: "#60a5fa", // Investigative - Blue
+    a: "#a78bfa", // Artistic - Purple
+    s: "#fbbf24", // Social - Yellow
+    e: "#f97316", // Enterprising - Orange
+    c: "#f43f5e"  // Conventional - Red
+  };
+  
+  const data = {
+    labels: ["Realistic (R)", "Investigative (I)", "Artistic (A)", "Social (S)", "Enterprising (E)", "Conventional (C)"],
+    datasets: [{
+      label: "Career Assessment Scores",
+      data: [scores.r, scores.i, scores.a, scores.s, scores.e, scores.c],
+      backgroundColor: [
+        chartColors.r,
+        chartColors.i,
+        chartColors.a,
+        chartColors.s,
+        chartColors.e,
+        chartColors.c
+      ],
+      borderColor: [
+        chartColors.r,
+        chartColors.i,
+        chartColors.a,
+        chartColors.s,
+        chartColors.e,
+        chartColors.c
+      ],
+      borderWidth: 1
+    }]
+  };
+  
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false, // Allow chart to fill container
+    plugins: {
+      legend: { 
+        display: true,
+        position: 'top',
+        labels: {
           font: {
-            size: 22,
-            weight: 'bold'
+            size: 14
           },
-          color: '#1e40af',
-          padding: {
-            top: 10,
-            bottom: 20
-          }
+          padding: 20
         }
       },
-      scales: {
-        y: {
-          beginAtZero: true,
-          precision: 0,
-          ticks: {
-            stepSize: 1,
-            font: {
-              size: 14
-            }
-          },
-          grid: {
-            color: 'rgba(0, 0, 0, 0.05)'
-          }
+      title: { 
+        display: true, 
+        text: "Your Career Category Scores",
+        font: {
+          size: 22,
+          weight: 'bold'
         },
-        x: {
-          ticks: {
-            font: {
-              size: 14
-            }
-          },
-          grid: {
-            color: 'rgba(0, 0, 0, 0.05)'
-          }
+        color: '#1e40af',
+        padding: {
+          top: 10,
+          bottom: 20
         }
       }
-    };
-    
-    if (chartInstance) chartInstance.destroy();
-    chartInstance = new Chart(ctx, { 
-      type: "bar", 
-      data, 
-      options 
-    });
-  }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        min: 0,
+        max: 30,
+        precision: 0,
+        ticks: {
+          stepSize: 5, // Show labels at every 5th value
+          font: {
+            size: 14
+          },
+          callback: function(value) {
+            // Only show labels at multiples of 5
+            if (value % 5 === 0) return value;
+            return '';
+          }
+        },
+        grid: {
+          color: 'rgba(0, 0, 0, 0.1)',
+          drawTicks: false,
+          drawOnChartArea: true,
+          lineWidth: 1
+        }
+      },
+      x: {
+        ticks: {
+          font: {
+            size: 14
+          }
+        },
+        grid: {
+          color: 'rgba(0, 0, 0, 0.05)'
+        }
+      }
+    }
+  };
+  
+  if (chartInstance) chartInstance.destroy();
+  chartInstance = new Chart(ctx, { 
+    type: "bar", 
+    data, 
+    options 
+  });
+}
+  
 
-  function calculateScores() {
-    const scores = { r: 0, i: 0, a: 0, s: 0, e: 0, c: 0 };
-    let unanswered = false;
+function calculateScores() {
+  const scores = { r: 0, i: 0, a: 0, s: 0, e: 0, c: 0 };
+  const page1Scores = { r: 0, i: 0, a: 0, s: 0, e: 0, c: 0 };
+  const page2Scores = { r: 0, i: 0, a: 0, s: 0, e: 0, c: 0 };
+  let unanswered = false;
     
     Object.keys(scores).forEach(cat => {
-      const inputs = document.querySelectorAll(`input[name^='${cat}']`);
-      const names = new Set(Array.from(inputs).map(i => i.name));
+    for (let i = 1; i <= 5; i++) {
+      const name = `${cat}${i}`;
+      const group = document.getElementsByName(name);
+      const selected = Array.from(group).find(r => r.checked);
       
-      names.forEach(name => {
-        const group = document.getElementsByName(name);
-        const selected = Array.from(group).find(r => r.checked);
-        
-        if (selected) {
-          scores[cat] += parseInt(selected.value);
-        } else {
-          unanswered = true;
-        }
-      });
-    });
+      if (selected) {
+        const value = parseInt(selected.value);
+        page1Scores[cat] += value;
+        scores[cat] += value;
+      } else {
+        unanswered = true;
+      }
+    }
+  });
+   page2Order.forEach((cat, i) => {
+    const name = `${cat}${i + 6}`;
+    const group = document.getElementsByName(name);
+    const selected = Array.from(group).find(r => r.checked);
     
+    if (selected) {
+      const value = parseInt(selected.value);
+      page2Scores[cat] += value;
+      scores[cat] += value;
+    } else {
+      unanswered = true;
+    }
+  });
+  
+if (unanswered) {
+  alert("Please answer all questions before submitting.");
+  return;
+}
+     
     if (unanswered) {
       alert("Please answer all questions before submitting.");
       return;
     }
     
-    Object.entries(scores).forEach(([cat, val]) => {
-      document.getElementById(`${cat}-score`).textContent = val;
-    });
-    
-    showInterpretation(scores);
-    renderChart(scores);
-  }
+    Object.entries(scores).forEach(([cat, total]) => {
+    const page1Value = page1Scores[cat];
+    const page2Value = page2Scores[cat];
+    document.getElementById(`${cat}-score`).innerHTML = 
+      `(${page1Value}+${page2Value})=${total}`;
+  });
+  
+  showInterpretation(scores);
+  renderChart(scores);
+}
 
   function showInterpretation(scores) {
     const descriptions = {
@@ -636,8 +794,7 @@
       s: "Social people are helpful, empathetic, and enjoy working with others. They value relationships and making a positive impact on people's lives through teaching, counseling, or service.",
       e: "Enterprising people are energetic, ambitious, and enjoy leading, persuading, and influencing others. They value status, power, and achievement in business or politics.",
       c: "Conventional people are organized, detail-oriented, and enjoy working with data, numbers, and systems. They value accuracy, stability, and clearly defined procedures."
-	   };
-	      
+    };
     
     const max = Math.max(...Object.values(scores));
     const top = Object.entries(scores).filter(([_, v]) => v === max);
@@ -674,36 +831,151 @@
     }
   };
   
-  document.getElementById("prevPageBtn").onclick = () => {
-    document.getElementById("page2").classList.remove("active");
-    document.getElementById("page1").classList.add("active");
-    document.getElementById("submitBtn").style.display = "none";
-    document.getElementById("results").style.display = "none";
-    document.querySelector(".chart-container").style.display = "none";
-    document.getElementById("copyBtn").style.display = "none";
-    document.getElementById("prevPageBtn").style.display = "none";
-    document.getElementById("nextPageBtn").style.display = "block";
-    
-    // Scroll to the top of the assessment container
-    document.querySelector(".assessment-container").scrollIntoView({ behavior: "smooth" });
-  };
-
-  document.getElementById("submitBtn").onclick = () => {
-    calculateScores();
-    
-    // Scroll to see results
-    document.getElementById("results").scrollIntoView({ behavior: "smooth" });
-  };
+ document.getElementById("prevPageBtn").onclick = () => {
+  document.getElementById("page2").classList.remove("active");
+  document.getElementById("page1").classList.add("active");
+  document.getElementById("submitBtn").style.display = "none";
+  document.getElementById("results").style.display = "none";
+  document.querySelector(".chart-container").style.display = "none";
+  document.getElementById("copyBtn").style.display = "none";
+  document.getElementById("saveChartBtn").style.display = "none";
+  document.getElementById("prevPageBtn").style.display = "none";
+  document.getElementById("nextPageBtn").style.display = "block";
   
-  document.getElementById("copyBtn").onclick = () => {
-    const text = Array.from(document.querySelectorAll(".result-item"))
-      .map(item => item.innerText).join("\n");
-    navigator.clipboard.writeText(text);
-    alert("Results copied to clipboard!");
-  };
+  // Scroll to the top of the assessment container
+  document.querySelector(".assessment-container").scrollIntoView({ behavior: "smooth" });
+};
+
+document.getElementById("submitBtn").onclick = () => {
+  calculateScores();
+  
+  // Show save chart button
+  document.getElementById("saveChartBtn").style.display = "block";
+  
+  // Scroll to see results
+  document.getElementById("results").scrollIntoView({ behavior: "smooth" });
+};
+  
+document.getElementById("copyBtn").onclick = () => {
+  const text = Array.from(document.querySelectorAll(".result-item"))
+    .map(item => {
+      const category = item.querySelector("span:first-child").innerText;
+      const score = item.querySelector("span:last-child").innerText;
+      return `${category} ${score}`;
+    }).join("\n");
+  navigator.clipboard.writeText(text);
+  alert("Results copied to clipboard!");
+};
 
   renderPage1();
   renderPage2();
+  
+ // Save Chart button functionality
+document.getElementById("saveChartBtn").onclick = () => {
+  // Show the modal
+  document.getElementById("saveModal").style.display = "block";
+};
+
+// Close the modal when clicking the x button
+document.querySelector(".close-btn").onclick = () => {
+  document.getElementById("saveModal").style.display = "none";
+};
+
+// Close the modal when clicking outside of it
+window.onclick = (event) => {
+  const modal = document.getElementById("saveModal");
+  if (event.target === modal) {
+    modal.style.display = "none";
+  }
+};
+
+// Handle the OK button click
+document.getElementById("confirmSaveBtn").onclick = () => {
+  const name = document.getElementById("saveNameInput").value.trim();
+  
+  if (!name) {
+    alert("Please enter your name");
+    return;
+  }
+  
+  // Close the modal
+  document.getElementById("saveModal").style.display = "none";
+  
+  // Get current date
+  const now = new Date();
+  const dateString = now.toLocaleDateString();
+  const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  
+  // Create a container to hold chart + info
+  const container = document.createElement("div");
+  container.style.backgroundColor = "white";
+  container.style.padding = "20px";
+  container.style.borderRadius = "10px";
+  container.style.width = document.querySelector(".chart-container").offsetWidth + "px";
+  
+  // Add the information text
+  const infoText = document.createElement("div");
+  infoText.style.textAlign = "center";
+  infoText.style.padding = "10px";
+  infoText.style.backgroundColor = "#f8fafc";
+  infoText.style.borderRadius = "8px";
+  infoText.style.marginTop = "20px";
+  infoText.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+  infoText.innerHTML = `<strong>Name:</strong> ${name} &nbsp;|&nbsp; <strong>Date:</strong> ${dateString} ${timeString}`;
+  
+  // First, convert chart to an image
+  const canvas = document.getElementById("scoreChart");
+  const chartImage = canvas.toDataURL("image/png");
+  
+  // Create a combined canvas with chart and text
+  html2canvas(document.querySelector(".chart-container")).then(chartCanvas => {
+    // Create new canvas for the full image
+    const finalCanvas = document.createElement("canvas");
+    const ctx = finalCanvas.getContext("2d");
+    
+    // Set dimensions to include space for text
+    finalCanvas.width = chartCanvas.width;
+    finalCanvas.height = chartCanvas.height + 50; // Extra space for text
+    
+    // Fill with white background
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+    
+    // Draw chart
+    ctx.drawImage(chartCanvas, 0, 0);
+    
+    // Add text
+    ctx.fillStyle = "#1e293b";
+    ctx.font = "14px 'Segoe UI', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(`Name: ${name} | Date: ${dateString} ${timeString}`, finalCanvas.width / 2, chartCanvas.height + 30);
+    
+    // Convert to image and trigger download
+    const dataURL = finalCanvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.download = `career_assessment_${name.replace(/\s+/g, "_")}.png`;
+    link.href = dataURL;
+    link.click();
+  });
+  
+  // Fallback method if html2canvas fails
+  setTimeout(() => {
+    // Create an image from the chart
+    const image = new Image();
+    image.src = chartImage;
+    
+    // Download the chart directly if the combined approach fails
+    try {
+      const link = document.createElement("a");
+      link.download = `career_assessment_${name.replace(/\s+/g, "_")}.png`;
+      link.href = chartImage;
+      link.click();
+    } catch (error) {
+      console.error("Error saving chart:", error);
+      alert("There was an error saving the chart. Please try again.");
+    }
+  }, 1000);
+}; 
 </script>
 </body>
 </html>
