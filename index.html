@@ -11,13 +11,15 @@
       --primary: #2563eb;
       --primary-dark: #1e40af;
       --secondary: #4f46e5;
-      --accent: #eab308;
+      --accent: #52ceff; /* Changed accent color slightly */
       --text-dark: #1e293b;
       --text-light: #64748b;
       --white: #ffffff;
       --light-bg: #f8fafc;
       --border: #e2e8f0;
       --success: #10b981;
+      --danger: #dc2626; /* Added danger color */
+      --danger-light: #fee2e2; /* Added light danger color */
     }
     
     * {
@@ -89,7 +91,7 @@
     }
     
     .assessment-container h2 {
-      color: #b91c1c;
+      color: #062556; /* Changed to a darker red */
       margin-bottom: 20px;
       padding-bottom: 10px;
       border-bottom: 2px solid var(--border);
@@ -116,6 +118,12 @@
       margin-bottom: 30px;
       border-left: 4px solid var(--primary);
     }
+     .instructions ul {
+       padding-left: 20px; /* Add padding for bullet points */
+     }
+     .instructions li {
+       margin-bottom: 10px; /* Space between instruction points */
+     }
     
     .category-title {
       font-weight: bold;
@@ -150,11 +158,24 @@
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid transparent; /* Add transparent border for transition */
     }
     
     .question-item:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Style for highlighting unanswered questions */
+    .question-item.unanswered-highlight {
+       border: 1px solid var(--danger);
+       background-color: var(--danger-light);
+    }
+    .question-item.unanswered-highlight label {
+        color: var(--danger); /* Make label text red too */
+    }
+    .question-item.unanswered-highlight .radio-group label {
+        border-color: var(--danger); /* Highlight the radio buttons */
     }
     
     .question-item label {
@@ -172,29 +193,82 @@
     .radio-group label {
       background-color: var(--white);
       padding: 8px 24px;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       transition: all 0.2s;
       text-align: center;
       margin: 0;
       flex: 1;
-      border: 1px solid var(--border);
+      border: 1px solid var(--border); /* Default border */
+      /* Make default radio buttons slightly more prominent */
+      border-color: var(--accent);
     }
     
     .radio-group label:hover {
       background-color: #f1f5f9;
+      border-color: var(--primary); /* Indicate hover */
     }
     
     .radio-group input[type="radio"] {
-      margin-right: 6px;
+      /* Hiding the actual radio button */
+      opacity: 0;
+      position: fixed;
+      width: 0;
     }
     
+    /* Style the label when the radio button is checked */
     .radio-group input[type="radio"]:checked + span {
       font-weight: 600;
-      color: var(--primary);
     }
-    
+    /* Style the entire label container when checked */
+    .radio-group input[type="radio"]:checked ~ label {
+         background-color: var(--primary-dark); /* Darker blue background */
+         color: var(--white); /* White text */
+         border-color: var(--primary-dark); /* Match border */
+    }
+    /* Target the specific label associated with the checked radio */
+     .radio-group input[type="radio"]:checked + span {
+         font-weight: bold; /* Example: make text bold */
+         /* Ensure the span itself doesn't override parent label styles if needed */
+         color: inherit; /* Inherit color from the parent label */
+     }
+
+
+    /* Correctly style the label associated with the radio button */
+    .radio-group label {
+        display: flex; /* Use flex to align items */
+        align-items: center; /* Center items vertically */
+        justify-content: center; /* Center items horizontally */
+        gap: 6px; /* Add gap between radio (if shown) and span */
+    }
+
+     /* Apply styles when the corresponding radio button is checked */
+    .radio-group input[type="radio"]:checked + span {
+        font-weight: 600;
+        color: var(--white); /* Text color for checked state */
+    }
+     /* Style the label itself when its radio button is checked */
+     .radio-group input[type="radio"]:checked + span {
+       /* Keep this if you want specific styles for the span */
+     }
+     /* Better approach: Style the label based on the checked state of its input */
+     .radio-group input[type="radio"]:checked ~ label[for] {
+         /* This is tricky because the input is *inside* the label in your structure */
+         /* Let's try targeting the label directly based on the input's state */
+     }
+      /* NEW APPROACH: Style the label containing the checked input */
+     .radio-group label:has(input[type="radio"]:checked) {
+        background-color: var(--primary); /* Blue background */
+        color: var(--white); /* White text */
+        border-color: var(--primary-dark); /* Darker border */
+     }
+     .radio-group label:has(input[type="radio"]:checked) span {
+         font-weight: 600; /* Ensure span reflects checked state */
+         color: var(--white);
+     }
+
+
     .results {
       display: none;
       margin-top: 30px;
@@ -212,16 +286,22 @@
       font-size: 1.4rem;
     }
     
+    /* Button Container - Flexbox with wrapping */
     .button-container {
       display: flex;
-      justify-content: space-between;
-      gap: 15px;
+      flex-wrap: wrap; /* Allow buttons to wrap */
+      justify-content: space-between; /* Distribute space */
+      gap: 15px; /* Gap between buttons */
       margin-top: 30px;
     }
     
+    /* Button Styling */
     button {
       padding: 12px;
-      width: 100%;
+      /* Let buttons take up space, adjust for wrapping */
+      flex-grow: 1; /* Allow buttons to grow */
+      flex-basis: calc(50% - 10px); /* Aim for 2 buttons per row, adjust calc as needed */
+      min-width: 120px; /* Minimum width for smaller buttons */
       background: var(--primary);
       color: white;
       border: none;
@@ -231,7 +311,33 @@
       font-weight: 600;
       transition: all 0.2s;
       box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+      text-align: center;
     }
+
+    /* Ensure buttons take full width if only one or two are visible */
+     button#prevPageBtn, button#nextPageBtn {
+         /* Adjust basis for Prev/Next when only they show */
+     }
+     button#submitBtn, button#saveChartBtn, button#copyBtn {
+        /* Adjust basis when these appear */
+     }
+
+
+    /* Adjust button width for smaller screens more explicitly if needed */
+     @media (max-width: 768px) {
+       button {
+          flex-basis: calc(50% - 8px); /* Ensure 2 per row on medium screens */
+       }
+     }
+     @media (max-width: 480px) {
+        .button-container {
+            gap: 10px; /* Reduce gap */
+        }
+        button {
+          flex-basis: 100%; /* Stack buttons vertically on very small screens */
+          /* width: 100%; remove width if using flex-basis */
+       }
+     }
     
     button:hover {
       background: var(--primary-dark);
@@ -272,10 +378,14 @@
       background-color: #ca8a04;
       box-shadow: 0 6px 8px rgba(234, 179, 8, 0.3);
     }
+     button#saveChartBtn {
+       /* Add specific styles if needed, otherwise inherits base button styles */
+     }
     
     .result-item {
       display: flex;
       justify-content: space-between;
+      align-items: center; /* Vertically align items */
       padding: 10px 15px;
       background: white;
       margin-bottom: 8px;
@@ -285,14 +395,17 @@
     
     .result-item span:first-child {
       font-weight: 500;
+      margin-right: 10px; /* Add space between category and score */
     }
     
     .result-item span:last-child {
       font-weight: 600;
       color: var(--primary);
       background: #e0e7ff;
-      padding: 2px 15px;
+      padding: 3px 15px; /* Adjusted padding */
       border-radius: 12px;
+      font-size: 0.95em; /* Slightly smaller font for score */
+      white-space: nowrap; /* Prevent score from wrapping */
     }
     
     #interpretation {
@@ -308,10 +421,20 @@
       margin-bottom: 10px;
       text-align: center;
     }
+     #interpretation p, #interpretation ul {
+       margin-bottom: 10px;
+     }
+     #interpretation ul {
+        padding-left: 20px;
+     }
+     #interpretation li {
+        margin-bottom: 5px;
+     }
     
     .chart-container {
       width: 100%;
-      height: 500px; /* Increased height for the chart */
+      max-width: 700px; /* Limit max width for better display */
+      height: 450px; /* Adjusted height */
       margin: 30px auto;
       background: white;
       padding: 20px;
@@ -323,175 +446,180 @@
       width: 100%;
       max-height: 100%;
     }
-	/* Modal Styles */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  animation: fadeIn 0.3s;
-}
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      animation: fadeIn 0.3s;
+    }
 
-.modal-content {
-  background-color: var(--white);
-  margin: 15% auto;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  width: 80%;
-  max-width: 400px;
-  animation: slideDown 0.4s;
-}
+    .modal-content {
+      background-color: var(--white);
+      margin: 15% auto;
+      padding: 25px; /* Increased padding */
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      width: 90%; /* More responsive width */
+      max-width: 400px;
+      animation: slideDown 0.4s;
+    }
 
-@keyframes slideDown {
-  from { transform: translateY(-50px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
+    @keyframes slideDown {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
 
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border);
-}
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px; /* Increased margin */
+      padding-bottom: 15px; /* Increased padding */
+      border-bottom: 1px solid var(--border);
+    }
 
-.modal-header h4 {
-  color: var(--primary-dark);
-  margin: 0;
-}
+    .modal-header h4 {
+      color: var(--primary-dark);
+      margin: 0;
+      font-size: 1.2rem; /* Slightly larger font */
+    }
 
-.close-btn {
-  color: var(--text-light);
-  font-size: 24px;
+    .close-btn {
+      color: var(--text-light);
+      font-size: 28px; /* Larger close button */
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+      line-height: 1; /* Adjust line height */
+    }
+
+    .close-btn:hover {
+      color: var(--primary);
+    }
+
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-form input {
+      padding: 12px; /* Increased padding */
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 20px; /* Increased margin */
+      font-size: 16px;
+    }
+
+    .modal-form button {
+        /* Inherit general button styles */
+        padding: 12px; /* Ensure consistent padding */
+        width: 100%; /* Make button full width */
+        /* Override flex properties if necessary */
+        flex-basis: auto;
+    }
+
+    /* Interpretation Note Styling */
+   .interpretation-note {
+  color: #1e40af; /* නව අකුරු පාට (තද නිල්) */
+  background-color: #eff6ff; /* නව පසුබිම් පාට (ලා නිල්) */
+  border-left: 4px solid #1e40af; /* Border එකද තද නිල් පාටට වෙනස් කිරීම */
+  /* අනෙකුත් style ගුණාංග එලෙසම තබන්න */
   font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.close-btn:hover {
-  color: var(--primary);
-}
-
-.modal-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.modal-form input {
-  padding: 10px;
-  border: 1px solid var(--border);
+  padding: 15px;
+  margin-top: 30px; 
+  margin-bottom: 20px; 
   border-radius: 8px;
-  margin-bottom: 15px;
-  font-size: 16px;
-}
+  line-height: 1.8;
+  font-size: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+     .interpretation-note strong {
+        color: #1e40af; /* Darker red for strong text */
+     }
+     .interpretation-note a { /* Style links within the note */
+         color: var(--primary-dark);
+         text-decoration: none;
+     }
+     .interpretation-note a:hover {
+         text-decoration: underline;
+     }
 
-.modal-form button {
-  padding: 10px;
-  background-color: var(--primary);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: all 0.2s;
-}
-
-.modal-form button:hover {
-  background-color: var(--primary-dark);
-}
-<style>
-  .interpretation-note {
-    color: #dc2626; /* deep red */
-    font-weight: bold;
-    background-color: #fff1f2; /* light red background */
-    border-left: 4px solid #dc2626;
-    padding: 15px;
-    margin-top: 30px;
-    border-radius: 8px;
-    line-height: 1.8;
-    font-size: 15px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  }
-</style>
-</style>
-	  </style>
+  </style>
 </head>
 <body>
-  <!-- Banner at the top -->
   <div class="banner">
     <a href="https://www.eduhelp.lk" target="_blank">
       <img src="https://www.eduhelp.lk/wp-content/uploads/2025/04/career-key-ad-04.jpg" alt="EduHelp Banner">
     </a>
   </div>
-  <!-- Modal for saving chart -->
-<div id="saveModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h4>Save Chart</h4>
-      <span class="close-btn">&times;</span>
-    </div>
-    <div class="modal-form">
-      <input type="text" id="saveNameInput" placeholder="Enter your name">
-      <button id="confirmSaveBtn">OK</button>
+  <div id="saveModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Save Chart</h4>
+        <span class="close-btn">&times;</span>
+      </div>
+      <div class="modal-form">
+        <input type="text" id="saveNameInput" placeholder="Enter your name">
+        <button id="confirmSaveBtn">OK</button>
+      </div>
     </div>
   </div>
-</div>
-<body>
+
   <div class="header">
     <h1>වෘත්තීය යතුර<br>CAREER KEY</h1>
     <h3>ඔබේ කැමැත්ත මැන ගනිමින් ඔබට ගැළපෙන වෘත්තිය තෝරාගන්න. ඔබේ වෘත්තිය හෝ අධ්‍යාපන ක්ෂේත්‍රය තෝරාගැනීම ගැළපීමේ ක්‍රියාවලියකි.</h3>
     <h4>Source by the Career Key by Lawrence K'Jones,Ph.D,NCC.<br>කොළඹ විශ්වවිද්‍යාලයීය වෘත්තීය මාර්ගෝපදේශන ඒකකයේ ආචාර්ය කීර්ති ප්‍රේමදාස හා අජිත් ජයවර්ධනගේ සැකසුමකි.<br>
-	ඩිජිටල් ප්‍රතිනිමැවුම-@ අමිල උඩවත්ත-www.eduhelp.lk-2025</h4>
-	  </div>
-	  <h4 class="interpretation-note">
-මෙහි අවසානයේ දැවෙන Interpretation හි ඇත්තේ දළ විශ්ලේෂණයක් පමණි. වැඩි විස්තර සඳහා ඔබට වෘත්තීය යතුර පිළිබඳ විශ්ලේෂණ 
-නිපුණතාව ඇති වෘත්තීය මාර්ගෝපදේශකවරයෙකුගේ සහයක් ලබා ගැනීමට අවශ්‍ය වේ.<br><br>
+    ඩිජිටල් ප්‍රතිනිමැවුම-@ අමිල උඩවත්ත-www.eduhelp.lk-2025</h4>
+  </div>
 
-ඒ යටතේ ඔබගේ ඉදිරි ජීවිතය තීරණය කරන බොහෝ කරුණු පිළිබඳ පුළුල් විග්‍රහයක් ලබාගත හැක. ඔබ කළයුතු වන්නේ 
-මේ ප්‍රස්ථාරයේ පින්තූරයක් save කරගෙන(save chart) මේ සමග ඇති ප්‍රථිඵල ද පිටපත් කරගෙන (Copy Result) එය 
-අදාළ මාර්ගෝපදේශකතුමා හෝ තුමිය වෙත යොමු කිරීමයි.<br><br>
+  <div class="interpretation-note">
+    මෙහි අවසානයේ දැවෙන Interpretation හි ඇත්තේ දළ විශ්ලේෂණයක් පමණි. වැඩි විස්තර සඳහා ඔබට වෘත්තීය යතුර පිළිබඳ විශ්ලේෂණ 
+    නිපුණතාව ඇති වෘත්තීය මාර්ගෝපදේශකවරයෙකුගේ සහයක් ලබා ගැනීමට අවශ්‍ය වේ.<br><br>
 
-මේ සඳහා යම් අයකිරීමක් සිදු කරනු ලබයි. නිවැරදි මගපෙන්වීමක් මත නිවැරදි මාවතක ගමන් කිරීමෙන් කාලය හා මුදල් 
-ඉතිරිකරගැනීමට ඔබට හැකිවනු ඇත.<br><br>
+    ඒ යටතේ ඔබගේ ඉදිරි ජීවිතය තීරණය කරන බොහෝ කරුණු පිළිබඳ පුළුල් විග්‍රහයක් ලබාගත හැක. ඔබ කළයුතු වන්නේ 
+    මේ ප්‍රස්ථාරයේ පින්තූරයක් save කරගෙන(save chart) මේ සමග ඇති ප්‍රථිඵල ද පිටපත් කරගෙන (Copy Result) එය 
+    අදාළ මාර්ගෝපදේශකතුමා හෝ තුමිය වෙත යොමු කිරීමයි.<br><br>
 
-<strong>EduHelp Career Guidance සේවාව</strong> තුළින් ඔබට එම සේවාව ලබාගැනීමට අවශ්‍ය නම් අමතන්න: 
-📞 <strong>0701768844</strong>
-</h4>
+    මේ සඳහා යම් අයකිරීමක් සිදු කරනු ලබයි. නිවැරදි මගපෙන්වීමක් මත නිවැරදි මාවතක ගමන් කිරීමෙන් කාලය හා මුදල් 
+    ඉතිරිකරගැනීමට ඔබට හැකිවනු ඇත.<br><br>
+
+    <strong>EduHelp Career Guidance සේවාව</strong> තුළින් ඔබට එම සේවාව ලබාගැනීමට අවශ්‍ය නම් අමතන්න: 
+    <a href="tel:0701768844"><strong>0701768844</strong></a>
+  </div>
   
   <div class="assessment-container">
     <h2>ඔබේ හැකියාවන් හා ළැදියාවන් හඳුනාගන්න</h2>
     
     <div class="instructions">
-    <ul>
-    <li>ඔබ දෙස ඔබ ම බලන්නේ කෙසේ ද?... එය තීරණය කිරීමට පහසු වන අයුරින් පළමු පිටුවේ වර්ග 6කට වෙන් කළ වගන්ති 30ක් දී තිබේ. එම සෑම වගන්තියක් ම කියවා එය ඔබව කොපමණ විස්තර කරන්නේදැ'යි තීරණය කරන්න. ඔබ සම්බන්ධයේ එම වගන්තිය වඩාත්ම නිවැරදි නම් ඒ සමග ඇති අංක අතරින් 2 සලකුණු කරන්න. ඔබ සම්බන්ධයෙන් එම වගන්තිය යම්තාක් දුරකට නිවැරදි නම් අංක 1 සලකුණු කරන්න. එය කිසිසේත් ම ඔබට අදාළ නොවේ නම් 0 සලකුණු කරන්න.</li>
-    <li>දෙවැනි පිටුවේ රැකියා වර්ග 48ක් දක්වා තිබේ. ඒවා අතරින් කුමන ආකාරයෙන් හෝ පැහැදිලිව ම ප්‍රයෝජනවත් වන හෝ ඔබගේ සිත් බැඳගන්නා රැකියාවන් තෝරා, අංක 2 මගින් සලකුණු කර දක්වන්න. එලෙසින් ම ඔබට යම්තාක්දුරට ප්‍රයෝජනවත් වන රැකියා අංක 1 මගින් ද, ප්‍රයෝජනවත් නොවන රැකියා 0 මගින් ද සලකුණු කරන්න.</li>
-    </ul>
-	</div>
+      <ul>
+        <li>ඔබ දෙස ඔබ ම බලන්නේ කෙසේ ද?... එය තීරණය කිරීමට පහසු වන අයුරින් පළමු පිටුවේ වර්ග 6කට වෙන් කළ වගන්ති 30ක් දී තිබේ. එම සෑම වගන්තියක් ම කියවා එය ඔබව කොපමණ විස්තර කරන්නේදැ'යි තීරණය කරන්න. ඔබ සම්බන්ධයේ එම වගන්තිය වඩාත්ම නිවැරදි නම් ඒ සමග ඇති අංක අතරින් 2 සලකුණු කරන්න. ඔබ සම්බන්ධයෙන් එම වගන්තිය යම්තාක් දුරකට නිවැරදි නම් අංක 1 සලකුණු කරන්න. එය කිසිසේත් ම ඔබට අදාළ නොවේ නම් 0 සලකුණු කරන්න.</li>
+        <li>දෙවැනි පිටුවේ රැකියා වර්ග 48ක් දක්වා තිබේ. ඒවා අතරින් කුමන ආකාරයෙන් හෝ පැහැදිලිව ම ප්‍රයෝජනවත් වන හෝ ඔබගේ සිත් බැඳගන්නා රැකියාවන් තෝරා, අංක 2 මගින් සලකුණු කර දක්වන්න. එලෙසින් ම ඔබට යම්තාක්දුරට ප්‍රයෝජනවත් වන රැකියා අංක 1 මගින් ද, ප්‍රයෝජනවත් නොවන රැකියා 0 මගින් ද සලකුණු කරන්න.</li>
+      </ul>
+    </div>
     
     <form id="careerAssessment">
       <div id="page1" class="page active"></div>
       <div id="page2" class="page"></div>
       
-      <!-- Chart Canvas (After Page 2) - Changed to be wrapped in a container -->
       <div class="chart-container" style="display: none;">
         <canvas id="scoreChart"></canvas>
       </div>
-	  
+      
       <div class="button-container">
-  <button type="button" id="prevPageBtn" style="display:none;">Previous</button>
-  <button type="button" id="nextPageBtn">Next</button>
-  <button type="button" id="submitBtn" style="display:none;">Show Results</button>
-  <button type="button" id="saveChartBtn" style="display:none;">Save Chart</button>
-  <button type="button" id="copyBtn" style="display:none;">Copy Results</button>
-</div>
+        <button type="button" id="prevPageBtn" style="display:none;">Previous</button>
+        <button type="button" id="nextPageBtn">Next</button>
+        <button type="button" id="submitBtn" style="display:none;">Show Results</button>
+        <button type="button" id="saveChartBtn" style="display:none;">Save Chart</button>
+        <button type="button" id="copyBtn" style="display:none;">Copy Results</button>
+      </div>
     </form>
-	
+    
 
     <div id="results" class="results">
       <h3>Results</h3>
@@ -513,7 +641,7 @@
 <script>
 
   const page1Categories = {
-	r: ["මා සතුන් උපකරණ හෝ යන්ත්‍ර සූත්‍ර සමග වැඩ කිරීමට කැමතිය.", "මාගේ වයසේ අනෙක් අය සමග සසඳන විට මට උපකරණ,යන්ත්‍ර සූත්‍ර හෝ සතුන් සමග වැඩ කිරීමේ හා යාන්ත්‍රික ඇඳීම් ආදියේ ඉහළ හැකියාවක් ඇත.",	"මම ප්‍රායෝගික දේ අගය කරමි. දැකිය හැකි ස්පර්ශ කළ හැකි ගස්වැල් හා සතුන් හදාවඩා ගන්නටත් වඩා හොඳින්‌ සාදන්නටත්‌ කැමැත්තෙමි.", "මා ප්‍රායෝගික, යාන්ත්‍රික දේට කැමති අතර යථාර්ථවාදී අයෙකි.", "එළිමහනේ කරන ක්‍රීඩාවලට ඉහළ හැකියාවක්‌ මට ඇත."],
+    r: ["මා සතුන් උපකරණ හෝ යන්ත්‍ර සූත්‍ර සමග වැඩ කිරීමට කැමතිය.", "මාගේ වයසේ අනෙක් අය සමග සසඳන විට මට උපකරණ,යන්ත්‍ර සූත්‍ර හෝ සතුන් සමග වැඩ කිරීමේ හා යාන්ත්‍රික ඇඳීම් ආදියේ ඉහළ හැකියාවක් ඇත.", "මම ප්‍රායෝගික දේ අගය කරමි. දැකිය හැකි ස්පර්ශ කළ හැකි ගස්වැල් හා සතුන් හදාවඩා ගන්නටත් වඩා හොඳින්‌ සාදන්නටත්‌ කැමැත්තෙමි.", "මා ප්‍රායෝගික, යාන්ත්‍රික දේට කැමති අතර යථාර්ථවාදී අයෙකි.", "එළිමහනේ කරන ක්‍රීඩාවලට ඉහළ හැකියාවක්‌ මට ඇත."],
     i: ["මා ගණිත හෝ විද්‍යා ගැටලු ඉගෙන ගැනීමට හා විසඳීමට කැමතියි.", "මාගේ වයසේ අනෙක්‌ අයට සාපේක්‍ෂව මට ගණිත ගැටලු අවබෝධ කරගැනීමේ හා ඒවා විසඳීමේ ඉහළ හැකියාවක්‌ ඇත.", "මා විද්‍යාව අගය කරනවා.", "මා සූක්‍ෂම,විද්‍යාත්මක හා බුද්ධිමත්‌ අයෙකි.", "අධිකරණ වෛද්‍ය විද්‍යාව හා බැඳුනු රහස්‌ පරීක්‍ෂක කතා කියවීමට හෝ එවැනි චිත්‍රපට නැරඹීමට දැඩි කැමැත්තක්‌ මට ඇත."],
     a: ["මා විත්‍ර, නාට්‍ය, කලා ශිල්ප, නැටුම්‌, සංගීතය හෝ නිර්මාණාත්මක ලේඛනය වැනි නිර්මාණශීලී දේ කිරීමට කැමතියි.", "මාගේ වයසේ අනෙක්‌ අයට සාපේක්ෂව නිර්මාණාත්මක ලේඛනය, නාට්‍ය, කලා ශිල්ප, සංගීතය, චිත්‍ර වැනි ක්ෂේත්‍රයන්හි ඉහළ කුසලතාවක්‌ මට ඇත.", "නිර්මාණශීලී ලේඛකයන්‌ අතරින්‌ බිහි වූ නාට්‍ය සංගීත, චිත්‍ර වැනි නිර්මාණාත්මක කලා කටයුතු මම අගය කරමි.", "මා ප්‍රතිභා සම්පන්න, කලාත්මක, පරිකල්පනාත්මක හැකියාවක්‌ ඇති අයෙකි.", "පරිගණක ආශ්‍රිතව කරන ඇඳිමි හා ශ්‍රව්‍ය දෘශ්‍ය නිර්මාණ කිරීමට මා තුළ ඉහළ කැමැත්තක්‌ ඇත."],
     s: ["ඉගැන්වීම, ප්‍රථමාධාර දීම, තොරතුරු සපයා දීම වැනි මිනිසුන්ට උදවි කළ හැකි දේ කිරීමට මා කැමතියි.", "මාගේ වයසේ අනෙක්‌ අයට සාපේක්ෂව මා ඉගැන්වීම, උපදේශනය, උපස්ථානය හෝ තොරතුරු සැපයීම වැනි ක්ෂේත්‍රයන්හි විශේෂ දක්ෂතාවයක්‌ දක්වයි.", "මම මිනිසුන්ට උදවි කිරීම හා සමාජ ප්‍රශ්න විසඳීම අගයකොට සලකමි.", "මා අන්‍යන්ට උපකාර වන මිත්‍රශීලී හා විශ්වාසවන්ත අයෙකි.", "සමිති සමාගම්‌ ආදියෙහි ක්‍රියාකාරී සාමාජිකත්වය ලබාගෙන කණ්ඩායම්‌ සමඟ කටයුතු කිරීමේ කැමැත්තක්‌ මට ඇත."],
@@ -542,42 +670,40 @@
     group.className = "radio-group";
     
     for (let i = 0; i <= 2; i++) {
-      const input = document.createElement("input");
-      input.type = "radio";
-      input.name = name;
-      input.value = i;
-      input.id = `${name}-${i}`;
-      
-      const wrapper = document.createElement("label");
-      wrapper.htmlFor = `${name}-${i}`;
-      wrapper.appendChild(input);
-      
-      const span = document.createElement("span");
-      span.textContent = ` ${i}`;
-      wrapper.appendChild(span);
-      
-      group.appendChild(wrapper);
+        const inputId = `${name}-${i}`;
+        const wrapper = document.createElement("label"); // Wrapper label for styling
+        wrapper.htmlFor = inputId; // Associate with the input
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = name;
+        input.value = i;
+        input.id = inputId;
+        
+        const span = document.createElement("span");
+        span.textContent = `${i}`; // Just the number
+
+        wrapper.appendChild(input); // Input first (though hidden)
+        wrapper.appendChild(span); // Then the number span
+        
+        group.appendChild(wrapper);
     }
     
-    item.appendChild(label);
-    item.appendChild(group);
+    item.appendChild(label); // Question text label
+    item.appendChild(group); // Radio button group
     return item;
   }
 
   function renderPage1() {
     const container = document.getElementById("page1");
+    container.innerHTML = ''; // Clear previous content
     Object.entries(page1Categories).forEach(([cat, questions]) => {
       const title = document.createElement("div");
       title.className = "category-title";
       
-      // Set category labels
       const categoryLabels = {
-        r: "Realistic (R)",
-        i: "Investigative (I)",
-        a: "Artistic (A)",
-        s: "Social (S)",
-        e: "Enterprising (E)",
-        c: "Conventional (C)"
+        r: "Realistic (R)", i: "Investigative (I)", a: "Artistic (A)",
+        s: "Social (S)", e: "Enterprising (E)", c: "Conventional (C)"
       };
       
       title.innerText = categoryLabels[cat];
@@ -597,6 +723,7 @@
 
   function renderPage2() {
     const container = document.getElementById("page2");
+     container.innerHTML = ''; // Clear previous content
     const title = document.createElement("div");
     title.className = "category-title";
     title.innerText = "Career Interest Questions";
@@ -616,118 +743,65 @@
   let chartInstance;
 
   function renderChart(scores) {
-  const ctx = document.getElementById("scoreChart").getContext("2d");
-  
-  // Show the canvas container
-  document.querySelector(".chart-container").style.display = "block";
-  
-  // Define chart colors
-  const chartColors = {
-    r: "#34d399", // Realistic - Green
-    i: "#60a5fa", // Investigative - Blue
-    a: "#a78bfa", // Artistic - Purple
-    s: "#fbbf24", // Social - Yellow
-    e: "#f97316", // Enterprising - Orange
-    c: "#f43f5e"  // Conventional - Red
-  };
-  
-  const data = {
-    labels: ["Realistic (R)", "Investigative (I)", "Artistic (A)", "Social (S)", "Enterprising (E)", "Conventional (C)"],
-    datasets: [{
-      label: "Career Assessment Scores",
-      data: [scores.r, scores.i, scores.a, scores.s, scores.e, scores.c],
-      backgroundColor: [
-        chartColors.r,
-        chartColors.i,
-        chartColors.a,
-        chartColors.s,
-        chartColors.e,
-        chartColors.c
-      ],
-      borderColor: [
-        chartColors.r,
-        chartColors.i,
-        chartColors.a,
-        chartColors.s,
-        chartColors.e,
-        chartColors.c
-      ],
-      borderWidth: 1
-    }]
-  };
-  
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false, // Allow chart to fill container
-    plugins: {
-      legend: { 
-        display: true,
-        position: 'top',
-        labels: {
-          font: {
-            size: 14
-          },
-          padding: 20
+    const ctx = document.getElementById("scoreChart").getContext("2d");
+    
+    // Show the canvas container
+    document.querySelector(".chart-container").style.display = "block";
+    
+    // Define chart colors
+    const chartColors = {
+      r: "#34d399", i: "#60a5fa", a: "#a78bfa",
+      s: "#fbbf24", e: "#f97316", c: "#f43f5e" 
+    };
+    
+    const data = {
+      labels: ["Realistic (R)", "Investigative (I)", "Artistic (A)", "Social (S)", "Enterprising (E)", "Conventional (C)"],
+      datasets: [{
+        label: "Career Assessment Scores",
+        data: [scores.r, scores.i, scores.a, scores.s, scores.e, scores.c],
+        backgroundColor: Object.values(chartColors),
+        borderColor: Object.values(chartColors),
+        borderWidth: 1
+      }]
+    };
+    
+    const options = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { 
+          display: true, position: 'top',
+          labels: { font: { size: 14 }, padding: 20 }
+        },
+        title: { 
+          display: true, text: "Your Career Category Scores",
+          font: { size: 22, weight: 'bold' }, color: '#1e40af',
+          padding: { top: 10, bottom: 20 }
         }
       },
-      title: { 
-        display: true, 
-        text: "Your Career Category Scores",
-        font: {
-          size: 22,
-          weight: 'bold'
-        },
-        color: '#1e40af',
-        padding: {
-          top: 10,
-          bottom: 20
-        }
-      }
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        min: 0,
-        max: 30,
-        precision: 0,
-        ticks: {
-          stepSize: 5, // Show labels at every 5th value
-          font: {
-            size: 14
+      scales: {
+        y: {
+          beginAtZero: true, min: 0, max: 28, // Max possible score is 5*2 + 8*2 = 26 per category
+          ticks: {
+            stepSize: 2, font: { size: 14 },
+             callback: function(value) { // Ensure labels are whole numbers
+                if (Math.floor(value) === value) {
+                    return value;
+                }
+             }
           },
-          callback: function(value) {
-            // Only show labels at multiples of 5
-            if (value % 5 === 0) return value;
-            return '';
-          }
+          grid: { color: 'rgba(0, 0, 0, 0.1)' }
         },
-        grid: {
-          color: 'rgba(0, 0, 0, 0.1)',
-          drawTicks: false,
-          drawOnChartArea: true,
-          lineWidth: 1
-        }
-      },
-      x: {
-        ticks: {
-          font: {
-            size: 14
-          }
-        },
-        grid: {
-          color: 'rgba(0, 0, 0, 0.05)'
+        x: {
+          ticks: { font: { size: 14 } },
+          grid: { color: 'rgba(0, 0, 0, 0.05)' }
         }
       }
-    }
-  };
-  
-  if (chartInstance) chartInstance.destroy();
-  chartInstance = new Chart(ctx, { 
-    type: "bar", 
-    data, 
-    options 
-  });
-}
+    };
+    
+    if (chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(ctx, { type: "bar", data, options });
+  }
   
 
 function calculateScores() {
@@ -735,47 +809,60 @@ function calculateScores() {
   const page1Scores = { r: 0, i: 0, a: 0, s: 0, e: 0, c: 0 };
   const page2Scores = { r: 0, i: 0, a: 0, s: 0, e: 0, c: 0 };
   let unanswered = false;
-    
-    Object.keys(scores).forEach(cat => {
+  
+  // Clear previous unanswered highlights
+  document.querySelectorAll('.unanswered-highlight').forEach(el => el.classList.remove('unanswered-highlight'));
+
+  // Check Page 1
+  Object.keys(scores).forEach(cat => {
     for (let i = 1; i <= 5; i++) {
       const name = `${cat}${i}`;
       const group = document.getElementsByName(name);
+      const questionItem = group.length > 0 ? group[0].closest('.question-item') : null;
       const selected = Array.from(group).find(r => r.checked);
       
       if (selected) {
         const value = parseInt(selected.value);
         page1Scores[cat] += value;
         scores[cat] += value;
+        if (questionItem) questionItem.classList.remove('unanswered-highlight'); // Remove if answered now
       } else {
         unanswered = true;
+        if (questionItem) questionItem.classList.add('unanswered-highlight'); // Add highlight
       }
     }
   });
-   page2Order.forEach((cat, i) => {
+
+  // Check Page 2
+  page2Order.forEach((cat, i) => {
     const name = `${cat}${i + 6}`;
     const group = document.getElementsByName(name);
+    const questionItem = group.length > 0 ? group[0].closest('.question-item') : null;
     const selected = Array.from(group).find(r => r.checked);
     
     if (selected) {
       const value = parseInt(selected.value);
       page2Scores[cat] += value;
       scores[cat] += value;
+      if (questionItem) questionItem.classList.remove('unanswered-highlight'); // Remove if answered now
     } else {
       unanswered = true;
+       if (questionItem) questionItem.classList.add('unanswered-highlight'); // Add highlight
     }
   });
   
-if (unanswered) {
-  alert("Please answer all questions before submitting.");
-  return;
-}
-     
-    if (unanswered) {
-      alert("Please answer all questions before submitting.");
-      return;
-    }
-    
-    Object.entries(scores).forEach(([cat, total]) => {
+  if (unanswered) {
+    alert("කරුණාකර සියලුම ප්‍රශ්න වලට පිළිතුරු සපයා ප්‍රතිඵල බලන්න.\nPlease answer all questions before submitting.");
+    // Scroll to the first unanswered question for better UX
+      const firstUnanswered = document.querySelector('.unanswered-highlight');
+      if(firstUnanswered) {
+          firstUnanswered.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    return null; // Return null to indicate failure
+  }
+      
+  // If all answered, display scores and results
+  Object.entries(scores).forEach(([cat, total]) => {
     const page1Value = page1Scores[cat];
     const page2Value = page2Scores[cat];
     document.getElementById(`${cat}-score`).innerHTML = 
@@ -784,41 +871,78 @@ if (unanswered) {
   
   showInterpretation(scores);
   renderChart(scores);
+  return scores; // Return scores on success
 }
 
   function showInterpretation(scores) {
     const descriptions = {
-      r: "Realistic people are practical, hands-on, and enjoy working with tools, machines, or nature. They prefer concrete problems over abstract ones and value tangible results.",
-      i: "Investigative people are analytical, curious, and enjoy exploring ideas and solving complex problems. They value knowledge and understanding through research and analysis.",
-      a: "Artistic people are creative, expressive, and enjoy unstructured activities that allow for self-expression and original thinking. They value aesthetics and innovation.",
-      s: "Social people are helpful, empathetic, and enjoy working with others. They value relationships and making a positive impact on people's lives through teaching, counseling, or service.",
-      e: "Enterprising people are energetic, ambitious, and enjoy leading, persuading, and influencing others. They value status, power, and achievement in business or politics.",
-      c: "Conventional people are organized, detail-oriented, and enjoy working with data, numbers, and systems. They value accuracy, stability, and clearly defined procedures."
+       r: "යථාර්ථවාදී (Realistic): ඔබ ප්‍රායෝගික, යථාර්ථවාදී පුද්ගලයෙකි. යන්ත්‍රසූත්‍ර, මෙවලම්, ශාක හෝ සතුන් සමඟ වැඩ කිරීමට කැමතියි. එළිමහනේ වැඩ කිරීමට වැඩි කැමැත්තක් දක්වයි.",
+       i: "විමර්ශනාත්මක (Investigative): ඔබ නිරීක්‍ෂණය කිරීමට, ඉගෙනීමට, විමර්ශනය කිරීමට, විශ්ලේෂණය කිරීමට, ඇගයීමට හෝ ගැටලු විසඳීමට කැමතියි. විද්‍යාත්මක හා ගණිතමය දේට උනන්දුය.",
+       a: "කලාත්මක (Artistic): ඔබ කලාත්මක, නව්‍යකරණ හෝ සහජ හැකියාවන් ඇති අයෙකි. නිර්මාණශීලී, ව්‍යුහගත නොවූ ක්‍රියාකාරකම් වලට කැමතියි. භාෂාව, කලාව, සංගීතය, නාට්‍ය, ලිවීම ආදියෙන් අදහස් ප්‍රකාශ කිරීමට කැමතියි.",
+       s: "සමාජශීලී (Social): ඔබ අන්‍යන් සමඟ වැඩ කිරීමට, දැනුවත් කිරීමට, පුහුණු කිරීමට, සුවපත් කිරීමට, උපදෙස් දීමට හෝ සේවය කිරීමට කැමතියි. මිත්‍රශීලී, උපකාරශීලී, සහ වගකීම් සහගතය.",
+       e: "ව්‍යවසායක (Enterprising): ඔබ අන්‍යන් සමඟ වැඩ කිරීමට, බලපෑම් කිරීමට, ඒත්තු ගැන්වීමට, නායකත්වය දීමට හෝ ආයතනික අරමුණු සඳහා කළමනාකරණය කිරීමට කැමතියි. අභිලාෂකාමී, බලවත්, සහ සමාජශීලී ය.",
+       c: "සාම්ප්‍රදායික (Conventional): ඔබ දත්ත සමඟ වැඩ කිරීමට, ලිපි ලේඛන කටයුතු කිරීමට, හෝ අන්‍යන්ගේ උපදෙස් අනුගමනය කරමින් ක්‍රමානුකූලව වැඩ කිරීමට කැමතියි. පිළිවෙළ, නිරවද්‍යතාවය සහ වගකීම අගය කරයි."
     };
     
-    const max = Math.max(...Object.values(scores));
-    const top = Object.entries(scores).filter(([_, v]) => v === max);
+    // Find the highest score(s)
+    const sortedScores = Object.entries(scores).sort(([, a], [, b]) => b - a);
+    const maxScore = sortedScores[0][1];
+    const topCategories = sortedScores.filter(([, score]) => score === maxScore);
+
+    let html = "<h4>Interpretation (දළ විශ්ලේෂණය)</h4>";
     
-    let html = "<h4>Your Career Type Interpretation</h4>";
-    
-    if (top.length === 1) {
-      const [key] = top[0];
-      html += `<p><strong>${key.toUpperCase()}</strong>: ${descriptions[key]}</p>`;
+    if (topCategories.length > 0 && maxScore > 0) { // Ensure there's a score > 0
+         html += `<p>ඔබගේ වැඩිම ලකුණු (${maxScore}) හිමිවී ඇති ප්‍රධාන වෘත්තීය පෞරුෂ වර්ගය / වර්ග: </p><ul>`;
+         topCategories.forEach(([key]) => {
+             html += `<li><strong>${key.toUpperCase()}</strong>: ${descriptions[key]}</li>`;
+         });
+         html += "</ul>";
+
+         // Suggest secondary types if scores are close
+         if (sortedScores.length > topCategories.length) {
+             const secondHighestScore = sortedScores[topCategories.length][1];
+             // Define a threshold for "close" scores (e.g., within 3 points)
+             if (maxScore - secondHighestScore <= 3 && secondHighestScore > 0) {
+                 const secondaryCategories = sortedScores.filter(([, score]) => score === secondHighestScore);
+                 html += `<p>ඔබගේ දෙවනුව ඉහළ ලකුණු (${secondHighestScore}) ලැබූ පෞරුෂ වර්ග:</p><ul>`;
+                  secondaryCategories.forEach(([key]) => {
+                       html += `<li><strong>${key.toUpperCase()}</strong>: ${descriptions[key]}</li>`;
+                  });
+                  html += "</ul>";
+             }
+         }
+          html += "<p><strong>සැලකිය යුතුයි:</strong> මෙය මූලික විශ්ලේෂණයකි. ඔබගේ ලකුණු රටාව (උදා: සියලු ලකුණු සමාන වීම, ඉතා අඩු ලකුණු) සහ නිශ්චිත වෘත්තීය තේරීම් සඳහා වෘත්තීය උපදේශකයෙකුගේ සහාය ලබාගැනීම වඩාත් සුදුසුය.</p>";
+
     } else {
-      html += "<p>You have multiple dominant types:</p><ul>";
-      top.forEach(([key]) => {
-        html += `<li><strong>${key.toUpperCase()}</strong>: ${descriptions[key]}</li>`;
-      });
-      html += "</ul>";
+         html += "<p>ප්‍රතිඵල විශ්ලේෂණය කිරීමට කරුණාකර ප්‍රශ්නවලට පිළිතුරු සපයන්න. නැතහොත් ඔබගේ ලකුණු ඉතා අඩු මට්ටමක පවතී. </p>";
     }
-    
+
     document.getElementById("interpretation").innerHTML = html;
     document.getElementById("results").style.display = "block";
-    document.getElementById("copyBtn").style.display = "block";
+    document.getElementById("copyBtn").style.display = "block"; // Show copy button with results
+    document.getElementById("saveChartBtn").style.display = "block"; // Show save button with results
   }
 
-  // Navigation with scroll-to-top functionality
+  // --- Event Listeners ---
+
   document.getElementById("nextPageBtn").onclick = () => {
+    // Basic check if page 1 has unanswered questions (optional, full check on submit)
+     /* // Add a basic check for unanswered on page 1 if desired
+     let page1Unanswered = false;
+     Object.keys(page1Categories).forEach(cat => {
+         for (let i = 1; i <= 5; i++) {
+             if (!document.querySelector(`input[name="${cat}${i}"]:checked`)) {
+                 page1Unanswered = true; break;
+             }
+         }
+          if(page1Unanswered) break;
+     });
+      if (page1Unanswered) {
+          alert("Please answer all questions on this page before proceeding.");
+          return; // Stop navigation
+      }
+     */
+     
     if (document.getElementById("page1").classList.contains("active")) {
       document.getElementById("page1").classList.remove("active");
       document.getElementById("page2").classList.add("active");
@@ -826,45 +950,60 @@ if (unanswered) {
       document.getElementById("prevPageBtn").style.display = "block";
       document.getElementById("nextPageBtn").style.display = "none";
       
-      // Scroll to the top of the assessment container
-      document.querySelector(".assessment-container").scrollIntoView({ behavior: "smooth" });
+      // Hide result/copy/save buttons when moving to page 2
+       document.getElementById("results").style.display = "none";
+       document.querySelector(".chart-container").style.display = "none";
+       document.getElementById("copyBtn").style.display = "none";
+       document.getElementById("saveChartBtn").style.display = "none";
+       
+      document.querySelector(".assessment-container h2").scrollIntoView({ behavior: "smooth" });
     }
   };
   
- document.getElementById("prevPageBtn").onclick = () => {
-  document.getElementById("page2").classList.remove("active");
-  document.getElementById("page1").classList.add("active");
-  document.getElementById("submitBtn").style.display = "none";
-  document.getElementById("results").style.display = "none";
-  document.querySelector(".chart-container").style.display = "none";
-  document.getElementById("copyBtn").style.display = "none";
-  document.getElementById("saveChartBtn").style.display = "none";
-  document.getElementById("prevPageBtn").style.display = "none";
-  document.getElementById("nextPageBtn").style.display = "block";
-  
-  // Scroll to the top of the assessment container
-  document.querySelector(".assessment-container").scrollIntoView({ behavior: "smooth" });
+  document.getElementById("prevPageBtn").onclick = () => {
+    if (document.getElementById("page2").classList.contains("active")) {
+      document.getElementById("page2").classList.remove("active");
+      document.getElementById("page1").classList.add("active");
+      document.getElementById("submitBtn").style.display = "none";
+      document.getElementById("results").style.display = "none";
+      document.querySelector(".chart-container").style.display = "none";
+      document.getElementById("copyBtn").style.display = "none";
+      document.getElementById("saveChartBtn").style.display = "none";
+      document.getElementById("prevPageBtn").style.display = "none";
+      document.getElementById("nextPageBtn").style.display = "block";
+      
+      document.querySelector(".assessment-container h2").scrollIntoView({ behavior: "smooth" });
+    }
 };
 
 document.getElementById("submitBtn").onclick = () => {
-  calculateScores();
+  const scores = calculateScores(); // calculateScores now returns null on failure
   
-  // Show save chart button
-  document.getElementById("saveChartBtn").style.display = "block";
-  
-  // Scroll to see results
-  document.getElementById("results").scrollIntoView({ behavior: "smooth" });
+  if (scores) { // Only proceed if scores were calculated (no unanswered questions)
+    // Show save chart and copy buttons (already done in showInterpretation)
+    // Scroll to see results
+    document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 };
   
 document.getElementById("copyBtn").onclick = () => {
-  const text = Array.from(document.querySelectorAll(".result-item"))
+  const resultsText = Array.from(document.querySelectorAll(".result-item"))
     .map(item => {
       const category = item.querySelector("span:first-child").innerText;
       const score = item.querySelector("span:last-child").innerText;
-      return `${category} ${score}`;
+      return `${category}: ${score}`;
     }).join("\n");
-  navigator.clipboard.writeText(text);
-  alert("Results copied to clipboard!");
+
+  const interpretationText = document.getElementById("interpretation").innerText;
+
+  const fullText = `CAREER KEY RESULTS\n--------------------\n${resultsText}\n\nInterpretation\n--------------\n${interpretationText}\n\nGenerated by EduHelp.lk`;
+  
+  navigator.clipboard.writeText(fullText).then(() => {
+      alert("Results and Interpretation copied to clipboard!");
+  }).catch(err => {
+      console.error('Failed to copy results: ', err);
+      alert("Failed to copy results. Please try again.");
+  });
 };
 
   renderPage1();
@@ -872,7 +1011,6 @@ document.getElementById("copyBtn").onclick = () => {
   
  // Save Chart button functionality
 document.getElementById("saveChartBtn").onclick = () => {
-  // Show the modal
   document.getElementById("saveModal").style.display = "block";
 };
 
@@ -889,7 +1027,7 @@ window.onclick = (event) => {
   }
 };
 
-// Handle the OK button click
+// Handle the OK button click in the modal
 document.getElementById("confirmSaveBtn").onclick = () => {
   const name = document.getElementById("saveNameInput").value.trim();
   
@@ -898,83 +1036,63 @@ document.getElementById("confirmSaveBtn").onclick = () => {
     return;
   }
   
-  // Close the modal
-  document.getElementById("saveModal").style.display = "none";
+  document.getElementById("saveModal").style.display = "none"; // Close modal
   
-  // Get current date
-  const now = new Date();
-  const dateString = now.toLocaleDateString();
-  const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  
-  // Create a container to hold chart + info
-  const container = document.createElement("div");
-  container.style.backgroundColor = "white";
-  container.style.padding = "20px";
-  container.style.borderRadius = "10px";
-  container.style.width = document.querySelector(".chart-container").offsetWidth + "px";
-  
-  // Add the information text
-  const infoText = document.createElement("div");
-  infoText.style.textAlign = "center";
-  infoText.style.padding = "10px";
-  infoText.style.backgroundColor = "#f8fafc";
-  infoText.style.borderRadius = "8px";
-  infoText.style.marginTop = "20px";
-  infoText.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
-  infoText.innerHTML = `<strong>Name:</strong> ${name} &nbsp;|&nbsp; <strong>Date:</strong> ${dateString} ${timeString}`;
-  
-  // First, convert chart to an image
   const canvas = document.getElementById("scoreChart");
-  const chartImage = canvas.toDataURL("image/png");
-  
-  // Create a combined canvas with chart and text
-  html2canvas(document.querySelector(".chart-container")).then(chartCanvas => {
-    // Create new canvas for the full image
-    const finalCanvas = document.createElement("canvas");
-    const ctx = finalCanvas.getContext("2d");
-    
-    // Set dimensions to include space for text
-    finalCanvas.width = chartCanvas.width;
-    finalCanvas.height = chartCanvas.height + 50; // Extra space for text
-    
-    // Fill with white background
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-    
-    // Draw chart
-    ctx.drawImage(chartCanvas, 0, 0);
-    
-    // Add text
-    ctx.fillStyle = "#1e293b";
-    ctx.font = "14px 'Segoe UI', sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(`Name: ${name} | Date: ${dateString} ${timeString}`, finalCanvas.width / 2, chartCanvas.height + 30);
-    
-    // Convert to image and trigger download
-    const dataURL = finalCanvas.toDataURL("image/png");
-    const link = document.createElement("a");
-    link.download = `career_assessment_${name.replace(/\s+/g, "_")}.png`;
-    link.href = dataURL;
-    link.click();
-  });
-  
-  // Fallback method if html2canvas fails
-  setTimeout(() => {
-    // Create an image from the chart
-    const image = new Image();
-    image.src = chartImage;
-    
-    // Download the chart directly if the combined approach fails
-    try {
+  const chartContainer = document.querySelector(".chart-container");
+
+  // Temporarily set background for capture if needed, but html2canvas should handle it
+  const originalBg = chartContainer.style.backgroundColor;
+  chartContainer.style.backgroundColor = 'white'; // Ensure background for capture
+
+  html2canvas(chartContainer, { 
+      scale: 2, // Increase resolution
+      logging: false, // Disable console logs from html2canvas
+      useCORS: true // If chart uses external resources
+   }).then(canvasCombined => {
+      // Restore original background
+      chartContainer.style.backgroundColor = originalBg;
+
+      // Create final canvas to add name and date
+      const finalCanvas = document.createElement("canvas");
+      const ctx = finalCanvas.getContext("2d");
+      
+      const padding = 20; // Padding around the text
+      const textHeight = 40; // Estimated space needed for the text line
+      finalCanvas.width = canvasCombined.width;
+      finalCanvas.height = canvasCombined.height + textHeight + padding;
+
+      // Fill background
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+
+      // Draw the captured chart
+      ctx.drawImage(canvasCombined, 0, 0);
+
+      // Add Name and Date/Time
+      const now = new Date();
+      const dateString = now.toLocaleDateString('si-LK'); // Use appropriate locale if needed
+      const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }); // Consistent time format
+      const infoText = `Name: ${name} | Date: ${dateString} ${timeString} | EduHelp.lk`;
+
+      ctx.fillStyle = "#1e293b"; // Dark text color
+      ctx.font = "bold 18px 'Segoe UI', sans-serif"; // Adjust font size/weight as needed
+      ctx.textAlign = "center";
+      ctx.fillText(infoText, finalCanvas.width / 2, canvasCombined.height + padding + (textHeight / 2));
+
+      // Trigger download
+      const dataURL = finalCanvas.toDataURL("image/png");
       const link = document.createElement("a");
-      link.download = `career_assessment_${name.replace(/\s+/g, "_")}.png`;
-      link.href = chartImage;
+      link.download = `Career_Key_${name.replace(/\s+/g, "_")}_${dateString.replace(/\//g, '-')}.png`;
+      link.href = dataURL;
       link.click();
-    } catch (error) {
-      console.error("Error saving chart:", error);
-      alert("There was an error saving the chart. Please try again.");
-    }
-  }, 1000);
+
+   }).catch(error => {
+       // Restore original background in case of error
+      chartContainer.style.backgroundColor = originalBg;
+       console.error("Error generating chart image with html2canvas:", error);
+       alert("Chart image could not be generated. Please try again or take a screenshot.");
+   });
 }; 
 </script>
 </body>
